@@ -4,4 +4,4 @@ string nome = Console.ReadLine();
 Console.Write("Qual è il tuo cognome? ");
 string cognome = Console.ReadLine();
 
-Console.WriteLine($"Benvenuto {nome} {cognome}!");
+Console.WriteLine($"Benvenuto {nome} {cognome}!")
