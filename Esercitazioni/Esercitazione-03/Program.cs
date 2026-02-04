@@ -11,7 +11,7 @@ int[] numeri = {1,2,3,4,5};
  List<int> interi = new List<int>{10,20,30};
  Console.WriteLine(interi[1]);
 
-// Dichiaro una lista di stringhe vuota e aggiungo 1 nome a scelta, stampando in console il secondo nome della lista.
+// Dichiaro una lista di stringhe vuota e aggiungo 1 nome a scelta, stampando in console il secondo nome della lista e successivamente l'ultimo elemento aggiunto.
 
 List<string> nomi = new List<string>{"Nome1","Nome2", "Nome3"};
 Console.WriteLine(nomi[1]);
