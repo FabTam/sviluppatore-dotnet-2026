@@ -2,6 +2,7 @@
  Creiamo una applicazione console che dichiara un array di 5 numeri interi, li inizializza con valori a scelta e stampa il primo numero dell'array.
  */
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 int[] numeri = {1,2,3,4,5};
  Console.WriteLine(numeri[0]); // Inserire un indice fuori dall'array otteniamo un'eccezione.
@@ -29,4 +30,30 @@ Dictionary<int, string> dizionario = new Dictionary<int, string>
 };
 
 Console.WriteLine(dizionario[2]);
+
+// Dichiaro un dizionario con chiave stringa e valore intero.Aggiungo al dizionario 3 coppie chiave-valore a scelta e stampo in console il valore associato alla chiave "Due"
+ Dictionary<string,int> dizionario2 = new Dictionary<string, int>();
  
+ dizionario2.Add("Uno",1);
+ dizionario2.Add("Due",2);
+ dizionario2.Add("Tre",3);
+
+ Console.WriteLine(dizionario2["Due"]);
+
+// Dichiaro una lista con aggiunta di un elemento tramite input utente da console
+List<string> utenti = new List<string>{"Nome1","Nome2", "Nome3"};
+Console.Write("Scrivi il nome dell'utente da aggiungere alla lista:");
+string nuovoUtente1 = Console.ReadLine();
+utenti.Add(nuovoUtente1); // aggiungo un nome alla lista
+
+Console.Write("Scrivi il nome dell'utente da aggiungere alla lista:");
+string nuovoUtente2 = Console.ReadLine();
+utenti.Add(nuovoUtente2); // aggiungo un nome alla lista
+
+Console.Write("Scrivi il nome dell'utente da aggiungere alla lista:");
+string nuovoUtente3 = Console.ReadLine();
+utenti.Add(nuovoUtente3); // aggiungo un nome alla lista
+
+Console.Write("Quale nome vuoi stampare?");
+int nomeDaStampare = int.Parse(Console.ReadLine());
+Console.WriteLine(utenti[nomeDaStampare]);
