@@ -17,3 +17,16 @@ List<string> nomi = new List<string>{"Nome1","Nome2", "Nome3"};
 Console.WriteLine(nomi[1]);
 nomi.Add("Nome4"); // aggiungo un nome alla lista
 Console.WriteLine(nomi[3]);
+
+// Dichiaro un dizionario con chiave intero e valore stringa e stampo in console il valore associato alla chiave 2
+
+Dictionary<int, string> dizionario = new Dictionary<int, string>
+{
+     {1,"Valore1"},
+     {2,"Valore2"},
+     {3,"Valore3"}
+    
+};
+
+Console.WriteLine(dizionario[2]);
+ 
