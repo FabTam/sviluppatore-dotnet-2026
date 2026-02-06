@@ -1,4 +1,4 @@
-﻿/* ESERCITAZIONE SUI TIPI DI DATI COMPLESSI IN C#
+﻿/* ESERCITAZIONE SUI TIPI DI DATI COMPLESSI IN C# E PARSE
  Creiamo una applicazione console che dichiara un array di 5 numeri interi, li inizializza con valori a scelta e stampa il primo numero dell'array.
  */
 using System.Runtime.CompilerServices;
@@ -41,7 +41,7 @@ Console.WriteLine(dizionario[2]);
  Console.WriteLine(dizionario2["Due"]);
 
 // Dichiaro una lista con aggiunta di un elemento tramite input utente da console
-List<string> utenti = new List<string>{"Nome1","Nome2", "Nome3"};
+List<string> utenti = new List<string>();
 Console.Write("Scrivi il nome dell'utente da aggiungere alla lista:");
 string nuovoUtente1 = Console.ReadLine();
 utenti.Add(nuovoUtente1); // aggiungo un nome alla lista
@@ -54,6 +54,18 @@ Console.Write("Scrivi il nome dell'utente da aggiungere alla lista:");
 string nuovoUtente3 = Console.ReadLine();
 utenti.Add(nuovoUtente3); // aggiungo un nome alla lista
 
-Console.Write("Quale nome vuoi stampare?");
-int nomeDaStampare = int.Parse(Console.ReadLine());
-Console.WriteLine(utenti[nomeDaStampare]);
+Console.Write("Quale nome vuoi stampare?1, 2 o 3?");
+string nomeDaStampare = Console.ReadLine();
+int indice = int.Parse(nomeDaStampare) -1;
+Console.WriteLine($"Il nome da stampare è : {utenti[indice]})");
+
+Console.WriteLine($"il tipo di dato è: {nomeDaStampare.GetType()}");
+
+Console.WriteLine("Inserisci un numero decimale:");
+string input = Console.ReadLine();
+double numeroDecimale = double.Parse(input); // Conversione da stringa a double
+Console.WriteLine($"Il numero inserito è: {numeroDecimale}");
+
+numeroDecimale = 9.99;
+int numeroIntero = (int)numeroDecimale; // casting in cui la parte decimale viene troncata
+Console.WriteLine($"Il numero intero è: {numeroIntero}");
