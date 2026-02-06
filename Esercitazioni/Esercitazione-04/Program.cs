@@ -33,7 +33,3 @@ int numero2 = int.Parse(Console.ReadLine());
 
 Console.WriteLine("Quale operazione vuoi eseguire?");
 string operazioneDaEseguire = Console.ReadLine();
-
-bool Somma = operazioneDaEseguire == "Somma";
-
-Console.WriteLine($"La somma è:{numero1 + numero2}");
