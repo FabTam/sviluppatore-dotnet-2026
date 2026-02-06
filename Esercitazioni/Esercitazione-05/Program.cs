@@ -1,15 +1,21 @@
-﻿//GESTIONE DELL'ECCEZIONE
-Console.Write("Inserisci il numero da sommare:");
+﻿// SWITCH (CONDIZIONALI) ALTERNATIVO A IF ELSE, MA PIù COMODO SUI SINGOLI VALORI
 
-const int NUMERO_PREDEFINITO = 10;
-string input = Console.ReadLine();
+Console.Write("Scegli una opzione fra 1, 2 o 3");
+int scelta = int.Parse(Console.ReadLine());
 
-if(int.TryParse(input, out int numeroUtente))
+switch(scelta)
 {
-    int risultato = NUMERO_PREDEFINITO + numeroUtente;
-    Console.WriteLine($"Questo è il risultato: {risultato}"); // se la conversione ha successo, sommare il numero predefinito.
+    case 1:
+       Console.WriteLine("Hai scelto l'opzione 1.");
+       break;
+    case 2:
+       Console.WriteLine("Hai scelto l'opzione 1.");
+       break;
+    case 3:
+       Console.WriteLine("Hai scelto l'opzione 1.");
+       break;
+    default:
+       Console.WriteLine("Scelta non valida");
+    break;
 }
-else
-{
-    Console.WriteLine("ERRORE: l'input inserito non è un numero valido."); // se la conversione fallisce, stampa un messaggio di errore.
-}
+
