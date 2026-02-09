@@ -64,22 +64,7 @@ for( index = 1; index <= 5; index ++)
 
 }
 
-// ESERCITAZIONE CON CICLO FOREACH
 
-List<int> numeri = new List<int>();
-Console.Write("Inserisci un numero:");
-int inserimento = int.Parse(Console.ReadLine());
-numeri.Add(inserimento);
-while (inserimento != 0)
-{
-    Console.Write("Inserisci un numero: ");
-    inserimento = int.Parse(Console.ReadLine());
-    numeri.Add(inserimento);
-}
-foreach(var numero in numeri)
-{
-    Console.Write($"{numero},");
-}
 
 
 
