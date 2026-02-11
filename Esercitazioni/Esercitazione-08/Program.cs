@@ -46,6 +46,16 @@ Console.WriteLine(nome.StartsWith("nom")); // verifica se inizia con una sottost
 
 Console.WriteLine(nome.EndsWith("me1")); // verifica se finisce con una sottostringa e restituisce un booleano.
 
+/* VERBATIM
+  Mettendo il simbolo @ prima di una stringa, è possibile scrivere una stringa su più righe.
+*/
+
+string percorso = @"C:\Users\NomeUtente\Documenti";
+Console.WriteLine(percorso); // output: C:\Users\NomeUtente\Documenti
+
+
+
+
 
 /* ESERCITAZIONE
 Programma che usa un array string con 5 nomi ed una variabile string per il contenuto da cercare.
