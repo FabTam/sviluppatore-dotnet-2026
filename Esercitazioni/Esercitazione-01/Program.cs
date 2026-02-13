@@ -27,5 +27,7 @@ string cognome = Console.ReadLine();
    Console.WriteLine("Ciao, " + nome +"!"); Concatenazione di stringhe
 */
 
+Console.Clear(); // Pulisce la console, magari dopo un input.
+
 Console.WriteLine($"Ciao, {nome} {cognome}!"); // Interpolazione (metodo da usare)
 

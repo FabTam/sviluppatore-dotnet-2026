@@ -1,128 +1,110 @@
-﻿/* DIZIONARI E METODI
+﻿//    ESERCITAZIONE
 
-I dizionari sono collezioni di coppie chiave-valore. La chiave deve essere univoca mentre i valori possono essere duplicati.
-I metodi disponibili per manipolare i dizionari sono:
+/*
+  - Crea un dizionario che associo ad un numero di telefono un nome ( crealo con qualche dato di default).
+  - Permette all'utente di inserire un numero di telefono e un nome e li aggiunge al dizionario.
+  - Permette all'utente di modificare il numero di telefono associato al nome.
+  - Permette all'utente di eliminare il nome ed il numero di telefono dal dizionario.
+  - Nel caso in inserimento di un nome già esistente, il programma chiede se si vuole aggiornare il numero di telefono associato a quel nome.
+  - Nel caso di modifica o rimozione il programma deve stampare prima la rubrica così da scegliere il nome da modificare o cancellare.
+  - Nel caso di eliminazione di un nome che non esiste, il programma deve stampare un messaggio di errore.
+
+  SUGGERIMENTI
+  - per la gestione generale del programma si può usare un while con una variabile booleana che diventa false quanto l'utente sceglie di uscire dal programma
+  - per la gestione della rubrica si può usare string string come chiave valore
+  - per la gestione dell'input si può normalizzare con i metodi di stringa e convertire il nome con la prima lettera maiuscola usando Textinfo.ToTitleCase()
+  - per la stampa possiamo ciclare con un foreach
+  - per stampare con un modo ordinato possiamo usare \t per inserire una tabulazione tra il nome e il numero di telefono.
 */
 
-/* METODO ADD
-Aggiunge un elemento al dizionario. Se la chiave esiste già, il valore viene aggiornato.
-*/
-
-using System.Formats.Asn1;
-
-Dictionary<int,string> dizionario = new Dictionary<int,string>()
+Dictionary<string, string> rubrica = new Dictionary<string, string>()
 {
-    {1, "uno"},
-    {2, "due"},
-    {3, "tre"}
+    {"fabio", "3466229087"},
+    {"ernesto", "33334345054"},
+    {"laura", "335807119"}
 };
 
-dizionario.Add(4, "quattro"); // aggiunge una coppia chiave valore, se la chiave esiste già, il valore deve essere gestito in modo da essere aggiornato.
-
-/*
-METODO ContainsKey
-Verifica se una chiave esiste nel dizionario
-*/
-
-bool esisteChiave = dizionario.ContainsKey(1);// true
- esisteChiave = dizionario.ContainsKey(5);// false
 
 
-/*
-METODO ContainsValue
-Verifica se c'è un valore nel dizionario
-*/
+bool continua = true;
 
-bool esisteValore = dizionario.ContainsValue("uno");// true
-esisteValore = dizionario.ContainsValue("cinque"); // false
-
-/*
-METODO TryGetValue
-Permette di ottenere il valore associato ad una chiave specifica. Restituisce true se la chiave esiste, altrimenti false.
-*/
-
-if(dizionario.TryGetValue(1, out string valore))
+while (continua)
 {
-    Console.WriteLine($"Il valore associato alla chiave 1 è: {valore}");
+    Console.WriteLine("Premi 1 per aggiungere un numero di telefono");
+    Console.WriteLine("Premi 2 per modificare");
+    Console.WriteLine("Premi 3 per eliminare");
+    Console.WriteLine("Premi 4 per visualizzare la rubrica");
+    Console.WriteLine("Premi 5 per uscire");
+    int input = int.Parse(Console.ReadLine());
 
-}
-else
-{
-    Console.WriteLine("La chiave 1 non esiste nel dizionario");
-}
-
-/*
-METODO Remove
-Rimuove un elemento dal dizionario in base alla chiave. Se la chiave non esiste, non viene fatto nulla.
-*/
-
-dizionario.Remove(2); // rimuove l'elemento con chiave 2.
-
-/* METODO Clear
-Elimina tutti gli elementi del dizionario.
-*/
-
-// dizionario.Clear();// dizionario pulito
-
-// ATTIVITA POSSIBILI CON DIZIONARIO:
-
-/* MODIFICA DI UN VALORE GIà ESISTENTE.
-  Assegnazione.
-*/
-
-dizionario[1] = "uno modificato";// accesso alla chiave 1 del dizionario
-
-/* ACCESSO AD UNA CHIAVE O AD UN VALORE
-
-Come convenzione si usa kvp(Key Value Pair) per accedere alla chiave e al valore di un dizionario
-
-*/
-
-foreach(var kvp in dizionario) // oppure si può utilizzare KeyValuePair<int,string>.
-{
-    Console.WriteLine($"Chiave: {kvp.Key}, Valore: {kvp.Value}");
-}
-
-// DIZIONARIO DI LISTE
-
-/* Un dizionario può contenere come valori anche altre strutture dati, come ad esempio una lista.
-*/
-
-Dictionary<int, List<string>> dizionarioListe = new Dictionary<int, List<string>>()
-{
-    {1, new List<string>{ "nome","prezzo"}},
-    {2, new List<string>{"nome"}},
-    {3, new List<string>{"nome","quantità"} }
-
-};
-
-// aggiungo un elemento alla lista associata alla chiave 1
-dizionarioListe[1].Add("quantità");
-
-foreach(var kvp in dizionarioListe)
-{
-    Console.WriteLine($"Chiave : {kvp.Key}, Valori: {string.Join(",", kvp.Value)}"); // essendo più valori faccio 
-}
-
-// Dizionario di dizionari
-
-Dictionary<int, Dictionary<string,string>> dizionarioDiDizionari = new Dictionary<int, Dictionary<string, string>>
-{
-    {1, new Dictionary<string, string>{{"nome", "prodotto1"},{"prezzo", "10"}}},
-    {2, new Dictionary<string, string>{{"nome", "prodotto2"},{"prezzo", "20"}}},
-    {3, new Dictionary<string, string>{{"nome", "prodotto3"},{"prezzo", "30"}}},
-
-};
-
-dizionarioDiDizionari[1].Add("quantità", "100"); // aggiungo un elemento al dizionario associato alla chiave 1
-
-dizionarioDiDizionari.Add(4, new Dictionary<string, string>{{"nome", "prod4"}, {"prezzo", "4"}, {"quantità", "2"}});
-
-foreach(var kvp in dizionarioDiDizionari)
-{
-    Console.WriteLine($"Chiave: {kvp.Key}"); // stampo le chiavi al primo giro e poi ciclo all'interno sulla chiave
-    foreach(var innerKvp in kvp.Value)
+    switch (input)
     {
-        Console.WriteLine($"Chiave: {innerKvp.Key}, Valore : {innerKvp.Value}");
+        case 1:
+
+            Console.WriteLine("Digita il numero da inserire");
+            string numero = Console.ReadLine();
+            Console.WriteLine("Digita il nome da inserire");
+            string nome = Console.ReadLine();
+            if (rubrica.ContainsKey(numero))
+            {
+                Console.WriteLine("Il numero inserito è già presente");
+            }
+            else
+            {
+                rubrica.Add(numero, nome); // aggiungo il numero e il nome passando i due input come stringhe
+            }
+            Console.Clear();
+            break;
+
+
+        case 2:
+
+            foreach (var kvp in rubrica)
+            {
+                Console.WriteLine($"Numero:{kvp.Key} \t Nome: {kvp.Value}");
+            }
+            Console.WriteLine("Quale numero vuoi modificare?");
+            string numerodaMoficare = Console.ReadLine();
+            Console.WriteLine("Inserisci il nuovo numero");
+            string nuovoNumero = Console.ReadLine();
+            rubrica[numerodaMoficare] = nuovoNumero;
+            Console.Clear();
+
+            break;
+
+        case 3:
+
+            Console.WriteLine($"Quale numero vuoi eliminare?");
+            string numerodaEliminare = Console.ReadLine();
+
+            if (rubrica.ContainsKey(numerodaEliminare) == false)
+            {
+                Console.WriteLine($"Numero non presente");
+            }
+            else
+            {
+                Console.WriteLine($"Numero eliminato = {numerodaEliminare}");
+            }
+            Console.Clear();
+            
+            break;
+
+
+        case 4:
+            foreach (var kvp in rubrica)
+            {
+                Console.WriteLine($"Numero:{kvp.Key} \t Nome: {kvp.Value}");
+            }
+            break;
+
+        case 5:
+            continua = false;
+            Console.Clear();
+            break;
+        default:
+            Console.WriteLine("Scelta non valida");
+            break;
+
     }
 }
+
