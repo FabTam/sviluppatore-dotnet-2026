@@ -36,7 +36,7 @@ while(true)
 
     }
      
-    prodotti.Add($"nome: {prodottoDiviso[0]} - prezzo: {prodottoDiviso[1]} - quantità: {prodottoDiviso[2]}");
+    prodotti.Add($"nome: {prodottoDiviso[0]} - prezzo: {prodottoDiviso[1]} - quantità: {prodottoDiviso[2]}"); // aggiunge il prodotto formattato alla lista
 
     Console.WriteLine("Vuoi inserire un altro prodotto? inserisci? (y/n)");
     string risposta = Console.ReadLine();
