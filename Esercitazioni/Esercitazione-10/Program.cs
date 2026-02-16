@@ -4,54 +4,42 @@
 ESERCITAZIONE 2
 
 Programma che: 
-- chiede all'utente di inserire il nome di un prodotto, il prezzo e la quantità intervallati da una virgola(esempio "prodotto1,10.5,2") OK
-- viene ripulita la stringa di input dagli spazi bianchi OK
-- viene verificato che l'input sia valido(deve contenere esattamente 3 parti: nome, prezzo e quantità) OK
-- se non è valido viene stampato un messaggio di errore e viene chiesto di inserire nuovamente il prodotto. OK
-- ogni prodotto viene aggiunto ad una lista di stringhe con il formato "nome:prodotto1 - prezzo: 10.5 - quantità:2"
-- viene chiesto all'utente se vuole inserire un altro prodottox
-- se l'utente risponde "y" viene chiesto di inserire un altro prodotto, altrimenti il programma termina x
-- la lista dei prodotti viene ordinata in ordine alfabetico e viene stampata a video
+- genera una password casuale di lunghezza compresa tra i 5 e gli 8 caratteri, che deve contenere almeno una lettera maiuscola, una lettera minuscola,
+ un numero e un carattere speciale(es: @,#,!,ecc). Non deve contenere spazi.
+
 */
 
-List<string> prodotti = new List<string>(); // lista per contenere i prodotti inseriti dall'utente.
 
-while(true)
+
+Random random             = new Random(); // creo la classe random per la generazione casuale della password
+
+int numeroCaratteri       = random.Next(5,9);
+string [] caratteriRandom = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
+                             "~","!","@","#","$","%", "^","&","*","_","-","+","=","`","|",";","<",">",".","?","/","0","1","2","3","4",
+                            "5","6","7","8","9","A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", 
+                            "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+
+List<string> password    = new List<string>();
+
+for(int i = 0; i < numeroCaratteri; i ++)
 {
-    Console.WriteLine("Inserisci nome del prodotto, il prezzo e la quantità: ");
-    string input = Console.ReadLine();
-    
-    if(string.IsNullOrWhiteSpace(input))
-    {
-        Console.WriteLine("input non valido");
-
-    }
-
-    string[] prodottoDiviso = input.Split(",");
-    input.Trim();
-    if(prodottoDiviso.Length != 3)
-    {
-        Console.WriteLine("Errore");
-        continue;
-
-    }
-     
-    prodotti.Add($"nome: {prodottoDiviso[0]} - prezzo: {prodottoDiviso[1]} - quantità: {prodottoDiviso[2]}"); // aggiunge il prodotto formattato alla lista
-
-    Console.WriteLine("Vuoi inserire un altro prodotto? inserisci? (y/n)");
-    string risposta = Console.ReadLine();
-    if(risposta != "y")
-    {
-        break;
-    }
-    
-   
+  int carattere             = random.Next(caratteriRandom.Length);
+  string generazioneCasuale = caratteriRandom[carattere].Trim();
+  password.Add(generazioneCasuale);   
 }
-prodotti.Sort();
-foreach(string p in prodotti)
-{
-    Console.WriteLine(p);
-}
+
+// manca il controllo da effettuare sugli intervalli che comprendono minuscole, maiuscole, numeri e caratteri speciali
+Console.WriteLine($"La password è:{string.Join("", password)}");
+
+
+
+
+
+
+
+
+
+
 
 
 

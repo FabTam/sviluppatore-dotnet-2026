@@ -20,7 +20,7 @@
 Dictionary<string, string> rubrica = new Dictionary<string, string>()
 {
     {"fabio", "3466229087"},
-    {"ernesto", "33334345054"},
+    {"ernesto", "3343345054"},
     {"laura", "335807119"}
 };
 
@@ -45,7 +45,7 @@ while (continua)
             string numero = Console.ReadLine();
             Console.WriteLine("Digita il nome da inserire");
             string nome = Console.ReadLine();
-            if (rubrica.ContainsKey(numero))
+            if (rubrica.ContainsKey(numero)) // se contiene la chiave con valore numero
             {
                 Console.WriteLine("Il numero inserito è già presente");
             }
@@ -61,13 +61,13 @@ while (continua)
 
             foreach (var kvp in rubrica)
             {
-                Console.WriteLine($"Numero:{kvp.Key} \t Nome: {kvp.Value}");
+                Console.WriteLine($"Numero:{kvp.Key} \t Nome: {kvp.Value}"); // stampo per ogni variabile contenuta in rubrica, la chiave e il valore
             }
             Console.WriteLine("Quale numero vuoi modificare?");
             string numerodaMoficare = Console.ReadLine();
             Console.WriteLine("Inserisci il nuovo numero");
             string nuovoNumero = Console.ReadLine();
-            rubrica[numerodaMoficare] = nuovoNumero;
+            rubrica[numerodaMoficare] = nuovoNumero; // al contenuto dell'indice di rubrica associo l'input contenuto nella variabile numero.
             Console.Clear();
 
             break;
