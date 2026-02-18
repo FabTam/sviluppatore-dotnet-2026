@@ -160,7 +160,7 @@ while (!valido)
             }
             else
             {
-                Console.WriteLine("Conversione non riuscita;");
+                Console.WriteLine("Conversione non riuscita.");
             }
             break;
 
