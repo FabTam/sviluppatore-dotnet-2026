@@ -1,30 +1,29 @@
-﻿// ESERCITAZIONE 2
-
-/*
- - Scrivi una funzione tipo string che si comporta come un ReadLine avanzato che implementa la validazione dell'input verificando che 
- non sia vuoto, che non contenga solo spazi bianchi e che non converta l'input in minuscolo:
-
- - trim : rimuove gli spazi bianchi all'inizio e alla fine 
- - isNullOrEmpty: verifica se la stringa è null o vuota
- - toLower : converte la stringa in minuscolo
+﻿/* ESERCITAZIONE 3
+ Scrivi una funzione che prende in input un numero intero e restituisce il numero solo se è pari, altrimenti restituisce un messaggio di errore.
 */
 
-string PulisciStringa()
+int PariODispari()
 {
-
-    string stringa;
-    while(true)
+    while (true)
     {
-        stringa = Console.ReadLine();
-        stringa = stringa.Trim();
-        if(!string.IsNullOrEmpty(stringa))
+        Console.WriteLine("Inserisci un numero");
+        string input = Console.ReadLine();
+        int numero;
+        if (int.TryParse(input, out numero))
         {
-            return stringa.ToLower();
+            if (numero % 2 == 1)
+            {
+                Console.WriteLine($"ERROR");
+                continue;
+            }
+            return numero;
+
         }
-        Console.WriteLine($"Input non valido");
+        else
+         Console.WriteLine("Input non valido.");
+
     }
-    
+
 }
 
-string input = PulisciStringa();
-Console.WriteLine($"{input}");
+Console.WriteLine($"L'input inserito è {PariODispari()}");
