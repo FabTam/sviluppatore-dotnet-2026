@@ -1,131 +1,135 @@
-﻿/* ESERCITAZIONE 4
- Programma Calcolatrice basato sulle funzioni:
+﻿/* ESERCITAZIONE 3
+ Implementazione dell'esercitaizone 1 del modulo Metodi Dizionario.
 
-    Il programma deve:
-    
-    - L'utente deve inserire una operazione da calcolare
-    - il programma calcolerà l'operazione in base all'input se l'operazione è possibile
-    - l'input deve avere queste limitazioni:
-    . deve essere una stringa di input unica che contiene l'operazione da calcolare. 
-    . deve avere 2 numeri e solo 1 operatore +,-,*,/
 
-    */
+*/
 
 
 
 
-
-
-
-
-
-
-Calcola();
-
-void Calcola()
+Dictionary<string, string> rubrica = new Dictionary<string, string>()
 {
-    while (true)
+    {"fabio", "3466229087"},
+    {"ernesto", "3343345054"},
+    {"laura", "335807119"}
+};
+
+MenuRubrica();
+
+void MenuRubrica()
+{
+
+    bool continua = true;
+
+    while (continua)
     {
-        Console.WriteLine("Inserisci una operazione da calcolare o premi 0 per spegnere:");
-        string input = Console.ReadLine();
+        Console.WriteLine("Premi 1 per aggiungere un contatto nella rubrica");
+        Console.WriteLine("Premi 2 per modificare");
+        Console.WriteLine("Premi 3 per eliminare");
+        Console.WriteLine("Premi 4 per visualizzare la rubrica");
+        Console.WriteLine("Premi 5 per uscire");
 
-        if (input == "0")
-            break;
-
-        char[] operatori = { '+', '-', '*', '/' };
-        char operatore = '\0';
-
-        foreach (char o in operatori)
-        {
-            if (input.Contains(o))
+        string comando = LeggiInput("");
+       
+            switch (comando)
             {
-                operatore = o;
-                break;
+                case "1":
+                    Aggiungi();
+                    break;
+
+                case "2":
+                    Stampa(rubrica);
+                    Modifica();
+                    break;
+
+                case "3":
+                    Rimuovi();
+                    break;
+
+
+                case "4":
+                    Stampa(rubrica);
+                    break;
+
+                case "5":
+                    continua = false;
+                    Console.Clear();
+                    break;
+                default:
+                    Console.WriteLine("Scelta non valida");
+                    break;
+
             }
-        }
+        
 
-        if (operatore == '\0')
-        {
-            Console.WriteLine("Operatore non valido!");
-            continue;
-        }
 
-        string[] numeri = input.Split(operatore);
-
-        if (numeri.Length != 2)
-        {
-            Console.WriteLine("Formato non valido!");
-            continue;
-        }
-
-        if (!int.TryParse(numeri[0], out int operando1) ||
-            !int.TryParse(numeri[1], out int operando2))
-        {
-            Console.WriteLine("Inserisci solo numeri validi!");
-            continue;
-        }
-
-        switch (operatore)
-        {
-            case '+':
-                Stampa(Somma(operando1, operando2));
-                break;
-
-            case '-':
-                Stampa(Sottrazione(operando1, operando2));
-                break;
-
-            case '*':
-                Stampa(Moltiplicazione(operando1, operando2));
-                break;
-
-            case '/':
-                if (operando2 == 0)
-                {
-                    Console.WriteLine("Impossibile dividere per zero!");
-                }
-                else
-                {
-                    Stampa(Divisione(operando1, operando2));
-                }
-                break;
-        }
     }
 }
 
-
-int Somma(int numero1, int numero2)
+string LeggiInput(string messaggio)
 {
-    int result = numero1 + numero2;
-    return result;
+    Console.WriteLine(messaggio);
+    string input = Console.ReadLine().Trim();
+    Console.Clear();
 
+    return input;
 }
 
-int Sottrazione(int numero1, int numero2)
+void Stampa(Dictionary<string, string> rubrica)
 {
-    int result = numero1 - numero2;
-    return result;
-}
-
-int Divisione(int numero1, int numero2)
-{
-    if (numero2 == 0)
+    // itero nel dizionario e stampo ogni chiave col valore corrispondente
+    foreach (var kvp in rubrica)
     {
-        Console.WriteLine("Impossibile dividere per zero");
+        Console.WriteLine($"Nome:{kvp.Key} \t Numero: {kvp.Value}");
+
+    }
+}
+
+void Aggiungi()
+{
+    string nome = LeggiInput("Inserisci il contatto da aggiungere:");
+    string numero = LeggiInput("Inserisci il numero da aggiungere:");
+
+    if (rubrica.ContainsKey(nome)) // se contiene la chiave con valore numero
+    {
+        Console.WriteLine("Il nome inserito è già presente");
+    }
+    else
+    {
+        rubrica.Add(nome, numero); // aggiungo il numero e il nome passando i due input come stringhe
     }
 
-    int result = numero1 / numero2;
-    return result;
 }
 
-int Moltiplicazione(int numero1, int numero2)
+void Modifica()
 {
-    int result = numero1 * numero2;
-    return result;
+    string contatto = LeggiInput("Inserisci il contatto da modificare");
+    if (rubrica.ContainsKey(contatto)) // se contiene la chiave
+    {
+        Console.WriteLine("Il nome inserito è già presente");
+
+    }
+    else
+    {
+        
+        string nuovoNumero = LeggiInput("Inserisci il nuovo numero:");
+        rubrica[contatto] = nuovoNumero; // al contenuto dell'indice di rubrica associo l'input contenuto nella variabile numero.
+        Console.Clear();
+    }
 }
 
-
-void Stampa(int risultato)
+void Rimuovi()
 {
-    Console.WriteLine($"Questo è il risultato: {risultato}");
+    string contatto = LeggiInput("Inserisci il contatto da rimuovere:");
+    if (rubrica.ContainsKey(contatto) == false)
+    {
+        Console.WriteLine($"Numero non presente");
+    }
+    else
+    {
+        rubrica.Remove(contatto);
+        Console.WriteLine($"Contatto eliminato = {contatto}");
+    }
+
+
 }
