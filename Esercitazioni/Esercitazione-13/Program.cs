@@ -95,7 +95,7 @@ void StampaContatti()
     // itero nel dizionario e stampo ogni chiave col valore corrispondente
     foreach (var kvp in rubrica)
     {
-        Console.WriteLine($"{kvp.Key, -5} {kvp.Value["nome"],-20} {kvp.Value["numero"],-15} {kvp.Value["indirizzo"],-30} {kvp.Value["status"],-10}");
+        Console.WriteLine($"{kvp.Key,-5} {kvp.Value["nome"],-20} {kvp.Value["numero"],-15} {kvp.Value["indirizzo"],-30} {kvp.Value["status"],-10}");
     }
 
     Console.WriteLine(new string('-', 80));
@@ -111,8 +111,8 @@ void StampaContattiAttivi()
     // itero nel dizionario e stampo ogni chiave col valore corrispondente
     foreach (var kvp in rubrica)
     {
-        if(kvp.Value["status"] == "true")
-         Console.WriteLine($"{kvp.Key} {kvp.Value["nome"],-20} {kvp.Value["numero"],-15} {kvp.Value["indirizzo"],-30}");
+        if (kvp.Value["status"] == "true")
+            Console.WriteLine($"{kvp.Key} {kvp.Value["nome"],-20} {kvp.Value["numero"],-15} {kvp.Value["indirizzo"],-30}");
     }
 
     Console.WriteLine(new string('-', 70));
@@ -120,21 +120,21 @@ void StampaContattiAttivi()
 }
 void Aggiungi()
 {
-    string nome      = LeggiInput("Inserisci il contatto da aggiungere:");
-    string numero    = LeggiInput("Inserisci il numero da aggiungere:");
+    string nome = LeggiInput("Inserisci il contatto da aggiungere:");
+    string numero = LeggiInput("Inserisci il numero da aggiungere:");
     string indirizzo = LeggiInput("Inserisci l'indirizzo da aggiungere:");
-    string status    = LeggiInput("Inserisci lo status da aggiungere:");
+    string status = LeggiInput("Inserisci lo status da aggiungere:");
 
     int id = random.Next(1, 100);
     if (!rubrica.ContainsKey(id))
     {
         Dictionary<string, string> nuovoContatto = new Dictionary<string, string>
-   {
+      {
         { "nome", nome },
         { "numero", numero },
         { "indirizzo", indirizzo },
         { "status", status }
-    };
+      };
 
         rubrica[id] = nuovoContatto;
 
@@ -153,10 +153,10 @@ void Modifica()
     int contatto = int.Parse(LeggiInput("Inserisci il contatto(ID) da modificare"));
     if (rubrica.ContainsKey(contatto)) // se contiene la chiave
     {
-        string nome      = LeggiInput("Inserisci il nome da modificare:");
-        string numero    = LeggiInput("Inserisci il numero da modificare:");
+        string nome = LeggiInput("Inserisci il nome da modificare:");
+        string numero = LeggiInput("Inserisci il numero da modificare:");
         string indirizzo = LeggiInput("Inserisci l'indirizzo da modificare:");
-        string status    = LeggiInput("Inserisci lo status da modificare:");
+        string status = LeggiInput("Inserisci lo status da modificare:");
 
         foreach (var kvp in rubrica)
         {
