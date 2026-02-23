@@ -127,8 +127,12 @@ foreach( string l in lines)
     Console.WriteLine(l); // Stampa ogni riga del file.
 }
 
+/*La differenza fra ReadAll e ReadAllLines è:
+  
+  - il primo restituisce una singola stringa.
+  - il secondo legge tutte le righe del file e le restituisce come un array di stringhe.
 
-
+*/
 // METODI FOLDERS
 
 
