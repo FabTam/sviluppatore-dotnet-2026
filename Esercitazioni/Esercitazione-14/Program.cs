@@ -7,7 +7,7 @@ crea un programma file manager che consenta all'utente di eseguire operazioni su
 - Partire da una cartella chiamata Data all'interno del progetto. X
 - fare selezionare una cartella all'utente inserendo un percorso relativo. X
 - deve elencare i file e le sottodirectory presenti nella cartella selezionata. x
-- stampare le informazioni su files e cartelle.
+- stampare le informazioni su files e cartelle. x
 - creare una cartella di backup con il timestamp all'interno della cartella selezionata.
 - Copiare tutti i file presenti nella cartella selezionata, mantenendo la struttura delle sottocartelle.
 - Deve spostare i files copiati dentro le cartelle divise per estensione ( una cartella per estensione).
@@ -42,20 +42,41 @@ void StampaCartelle()
     {
         string[] cartelle = Directory.GetDirectories(percorsoCartella);
 
+        Console.WriteLine($"[DIR]{percorsoCartella} contiene:");
         foreach (string c in cartelle)
         {
-            Console.WriteLine($"Queste sono le cartelle contenute in Data: {c}");
-            string nomeFile = Path.GetFileName(c);
-            Console.WriteLine($"Questi sono i file contenuti nelle cartella {c} : {nomeFile}");
+
+            string nomeCartella = Path.GetFileName(c);
+            Console.WriteLine($"[CARTELLA]: {nomeCartella}");
+
+            string[] files = Directory.GetFiles(c);
+            foreach (string f in files)
+            {
+                string nomeFile = Path.GetFileName(f);
+                //Console.WriteLine($"[CARTELLA]: {nomeCartella}");
+                Console.WriteLine($"[FILE]:{nomeFile}");
+
+
+            }
+
             string[] sottocartelle = Directory.GetDirectories(c);
             foreach (string sc in sottocartelle)
             {
-                string nomeFileSottoCartella = Path.GetFileName(sc);
-                Console.WriteLine($"Questo è il percorso delle sottocartelle: {sc}");
-                Console.WriteLine($"Questi sono i file contenuti nelle cartella {sc} : {nomeFileSottoCartella}");
+
+                string nomeSottoCartella = Path.GetFileName(sc);
+                Console.WriteLine($"[DIR]: {nomeCartella} [SUBDIR]: {nomeSottoCartella}");
+                string[] filesSottoCartella = Directory.GetFiles(sc);
+                foreach (string f in filesSottoCartella)
+                {
+                    string nomeFile = Path.GetFileName(f);
+                    Console.WriteLine($"[DIR]: {nomeSottoCartella} [FILE]:{nomeFile}");
+
+                }
+
             }
 
         }
+
 
     }
     else
@@ -64,7 +85,7 @@ void StampaCartelle()
     }
 }
 
-void SelezionaCartella()
+string SelezionaCartella()
 {
 
     StampaCartelle();
@@ -79,7 +100,7 @@ void SelezionaCartella()
         {
             cartellaTrovata = true;
             percorsoCartella = cartelle[i];
-            Console.WriteLine($"Hai selezionato la cartella: {percorsoCartella}");
+            Console.WriteLine($"Hai selezionato la cartella: {nomeCartella}");
             break;
         }
 
@@ -91,7 +112,7 @@ void SelezionaCartella()
             {
                 cartellaTrovata = true;
                 percorsoCartella = sottocartelle[j];
-                Console.WriteLine($"Hai selezionato la cartella: {percorsoCartella}");
+                Console.WriteLine($"Hai selezionato la cartella: {nomeCartella}");
                 break;
             }
         }
@@ -101,18 +122,35 @@ void SelezionaCartella()
     {
         Console.WriteLine("Cartella non presente.");
     }
+    return percorsoCartella;
+
 }
 
-void CreaCartellaBackup()
+string CreaCartellaBackup()
 {
     DateTime timeStampCartellaBackup = DateTime.Today;
-    timeStampCartellaBackup.ToString("dd,MM,yy");
-    string percorsoBackup =  Path.Combine(percorsoCartella, $"Backup {timeStampCartellaBackup}");
+    string formatoData = timeStampCartellaBackup.ToString("dd-MM-yyyy");
+    string percorsoBackup = Path.Combine(percorsoCartella, $"Backup {formatoData}");
     Directory.CreateDirectory(percorsoBackup);
     Console.WriteLine(percorsoBackup);
+    return percorsoBackup;
 }
 
 
 
-//SelezionaCartella();
-CreaCartellaBackup();
+SelezionaCartella();
+//string percorsoBackup = CreaCartellaBackup();
+//CopiaFile(percorsoCartella, percorsoBackup);
+
+void CopiaFile(string percorsoCartella, string percorsoDestinazione)
+{
+    string percorsoIniziale = percorsoCartella;
+    string percorsoFinale = percorsoDestinazione;
+    if (File.Exists(percorsoIniziale))
+    {
+        File.Copy(percorsoIniziale, percorsoFinale); // copia il file
+    }
+    else
+        Console.WriteLine("il file di origine non esiste");
+
+}
