@@ -131,6 +131,7 @@ void CopiaFile(string percorsoCartella, string percorsoDestinazione)
                 if(estensioneFile == ".txt")
                 {
                     percorsoDestinazione = Path.Combine(percorsoDestinazione, estensioneFile.ToUpper().Replace(".",""));
+
                 }
 
             }
@@ -158,5 +159,26 @@ void CopiaFile(string percorsoCartella, string percorsoDestinazione)
     }
     else
         Console.WriteLine("il file di origine non esiste");
+
+}
+
+void BackupRicorsivo(string directorySelezionata, string currentBackupDirectory)
+{
+    if(!Directory.Exists(directorySelezionata))
+    {
+        Console.WriteLine($"Attenzione la cartella {directorySelezionata} non esiste, uscita da Backup()");
+        return;
+    }
+
+    string[] directories = Directory.GetDirectories(directorySelezionata);
+    Console.WriteLine($"Stampa metodo backup, directorySelezionata : {directorySelezionata}  currentBackupDireectory: {currentBackupDirectory}");
+
+    foreach( string currentDirectory in directories)
+    {
+        string targetPath = Path.Combine(currentBackupDirectory, currentDirectory);
+        Directory.CreateDirectory(targetPath);
+    }
+    BackupRicorsivo(percorsoCartella,currentBackupDirectory);
+    //CopyFiles(variabili);
 
 }
