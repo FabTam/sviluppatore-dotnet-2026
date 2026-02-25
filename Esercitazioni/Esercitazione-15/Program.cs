@@ -1,14 +1,16 @@
 ﻿
 using Newtonsoft.Json;
 
+// SERIALIZZAZIONE DI UN OGGETTO
 
-/* DESERIALIZZAZIONE DI UN FILE JSON COMPLESSO(CHIAVE INT VALORE LISTA DI STRINGHE)
-   posso accedere agli elementi della lista di stirnghe con un ciclo foreahc o con il metodo stirng.join per stampare tutti gli elementi dlela lista in una sola riga.
-*/
+var partecipante = new
+{
+    nome = "Partecipante1",
+    eta = 30,
+    presente = true,
+    interessi = new List<string> {"programmazione", "musica", "sport"}
 
-string path = @"test.json";
-string json = File.ReadAllText(path); // leggo il contenuto del file json
-var partecipante = JsonConvert.DeserializeObject<dynamic>(json);
+};
 
-Console.WriteLine($"Interessi : {string.Join(",", partecipante.interessi)}");
-
+string json = JsonConvert.SerializeObject(partecipante, Formatting.Indented);
+File.WriteAllText(@"test.json",json);

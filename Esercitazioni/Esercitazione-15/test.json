@@ -1,6 +1,10 @@
 {
-  "nome": "Fabio",
-  "eta": 36,
+  "nome": "Partecipante1",
+  "eta": 30,
   "presente": true,
-  "interessi" : ["musica", "sport", "fumetti"]
+  "interessi": [
+    "programmazione",
+    "musica",
+    "sport"
+  ]
 }
