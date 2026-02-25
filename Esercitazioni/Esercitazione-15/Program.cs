@@ -3,14 +3,18 @@ using Newtonsoft.Json;
 
 // SERIALIZZAZIONE DI UN OGGETTO
 
-var partecipante = new
-{
-    nome = "Partecipante1",
-    eta = 30,
-    presente = true,
-    interessi = new List<string> {"programmazione", "musica", "sport"}
+string path = @"test.json";
+string json = File.ReadAllText(path);
 
-};
+var partecipante = JsonConvert.DeserializeObject<dynamic>(json);
 
-string json = JsonConvert.SerializeObject(partecipante, Formatting.Indented);
-File.WriteAllText(@"test.json",json);
+Console.WriteLine("Inserisci un partecipante");
+string input = Console.ReadLine();
+
+partecipante.partecipante = input;
+partecipante.lastId += 1;
+json = JsonConvert.SerializeObject(partecipante, Formatting.Indented);
+File.WriteAllText(path, json);
+
+Console.WriteLine($"Nome partecipante inserito: {partecipante.partecipante}");
+Console.WriteLine($"Id partecipante: {partecipante.lastId}");

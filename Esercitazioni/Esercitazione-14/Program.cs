@@ -22,6 +22,8 @@ Cartella 3 -> file.jpg
 
 
 */
+using System.Security.AccessControl;
+
 string percorsoCartella = @".\Data";
 
 
@@ -34,47 +36,25 @@ string LeggiInput(string messaggio)
     return input;
 }
 
-void StampaCartelle()
+void StampaCartelle(string percorso)
 {
-    if (Directory.Exists(percorsoCartella))
+    if (Directory.Exists(percorso))
     {
-        string[] cartelle = Directory.GetDirectories(percorsoCartella); // divido le cartelle in un array di stringhe
-
-        Console.WriteLine($"[DIR]{percorsoCartella} contiene:");
-        foreach (string c in cartelle)
+        // Stampa tutti i file della cartella corrente
+        string[] files = Directory.GetFiles(percorso);
+        Console.WriteLine($"[DIR]{Path.GetFileName(percorso)} contiene:");
+        foreach (string f in files)
         {
-
-            string nomeCartella = Path.GetFileName(c);
-            Console.WriteLine($"[CARTELLA]: {nomeCartella}");
-
-            string[] files = Directory.GetFiles(c); // divido i files presenti nelle cartelle in un array di stringhe
-            foreach (string f in files)
-            {
-                string nomeFile = Path.GetFileName(f);
-                Console.WriteLine($"[FILE]:{nomeFile}");
-
-
-            }
-
-            string[] sottocartelle = Directory.GetDirectories(c);
-            foreach (string sc in sottocartelle)
-            {
-
-                string nomeSottoCartella = Path.GetFileName(sc);
-                Console.WriteLine($"[DIR]: {nomeCartella} [SUBDIR]: {nomeSottoCartella}");
-                string[] filesSottoCartella = Directory.GetFiles(sc);
-                foreach (string f in filesSottoCartella)
-                {
-                    string nomeFile = Path.GetFileName(f);
-                    Console.WriteLine($"[DIR]: {nomeSottoCartella} [FILE]:{nomeFile}");
-
-                }
-
-            }
-
+            Console.WriteLine($"[FILE]: {Path.GetFileName(f)}");
         }
 
-
+        // Per ogni sottocartella, stampala e richiama ricorsivamente
+        string[] sottocartelle = Directory.GetDirectories(percorso);
+        foreach (string sc in sottocartelle)
+        {
+            Console.WriteLine($"[CARTELLA]: {Path.GetFileName(sc)}");
+            StampaCartelle(sc);  // qui stamperà anche i file di 'sc'
+        }
     }
     else
     {
@@ -84,87 +64,64 @@ void StampaCartelle()
 
 
 
-string CreaCartellaBackup()
+void CreaCartellaBackup(string percorsoOrigine, string percorsoDestinazione)
 {
     DateTime timeStampCartellaBackup = DateTime.Today;
     string formatoData = timeStampCartellaBackup.ToString("dd_MM_yyyy");
-    string percorsoBackup = Path.Combine($"Backup {formatoData}");
-    if (!Directory.Exists(percorsoBackup))
+    string percorsobackup = Path.Combine(percorsoDestinazione, $"Backup {formatoData}");
+    if (!Directory.Exists(percorsobackup))
     {
-        Directory.CreateDirectory(percorsoBackup);
-        string percorsoTXT = Path.Combine(percorsoBackup, "TXT");
-        string percorsoPNG = Path.Combine(percorsoBackup, "PNG");
-        string percorsoPDF = Path.Combine(percorsoBackup, "PDF");
+        Directory.CreateDirectory(percorsobackup);
 
-        Directory.CreateDirectory(percorsoTXT);
-        Directory.CreateDirectory(percorsoPNG);
-        Directory.CreateDirectory(percorsoPDF);
+        string[] files = Directory.GetFiles(percorsoOrigine);
+        foreach (string f in files)
+        {
+            File.Copy(f, Path.Combine(percorsobackup, Path.GetFileName(f))); // copia i file f nel percorso che combina il path del backup e i nome dei files
+        }
+
+        // Per ogni sottocartella, richiama la funzione così che faccia
+        string[] sottocartelle = Directory.GetDirectories(percorsoOrigine);
+        foreach (string sc in sottocartelle)
+        {
+            string percorsoBackupSc = Path.Combine(percorsobackup, Path.GetFileName(sc));
+            CreaCartellaBackup(sc, percorsoBackupSc);
+        }
 
     }
     else
     {
         Console.WriteLine("La cartella backup è già stata creata.");
         Console.WriteLine(new string('-', 60));
-
     }
-    return percorsoBackup;
 }
 
 
 
 
-string percorsoBackup = CreaCartellaBackup();
+StampaCartelle(percorsoCartella);
+CreaCartellaBackup(percorsoCartella);
+//Ricorsiva();
+//string percorsoBackup = CreaCartellaBackup();
 // CopiaFile(percorsoCartella, percorsoBackup);
 
 void CopiaFile(string percorsoCartella, string percorsoDestinazione)
 {
     if (Directory.Exists(percorsoCartella))
     {
-        string[] cartelle = Directory.GetDirectories(percorsoCartella); // divido le cartelle in un array di stringhe
-        
-        foreach (string c in cartelle)
-        {
-            string[] files = Directory.GetFiles(c); // divido i files presenti nelle cartelle in un array di stringhe
-            foreach (string f in files)
-            {
-                string estensioneFile = Path.GetExtension(f);
-                if(estensioneFile == ".txt")
-                {
-                    percorsoDestinazione = Path.Combine(percorsoDestinazione, estensioneFile.ToUpper().Replace(".",""));
 
-                }
 
-            }
-            string[] sottocartelle = Directory.GetDirectories(c);
-            foreach (string sc in sottocartelle)
-            {
-
-                string[] filesSottoCartella = Directory.GetFiles(sc);
-                foreach (string f in filesSottoCartella)
-                {
-                    string estensioneFile = Path.GetFileName(f);
-                }
-
-            }
-
-        }
-
-    }
-
-    string percorsoIniziale = percorsoCartella;
-    string percorsoFinale = percorsoDestinazione;
-    if (File.Exists(percorsoIniziale))
-    {
-        File.Copy(percorsoIniziale, percorsoFinale); // copia il file
     }
     else
-        Console.WriteLine("il file di origine non esiste");
+    {
+        Console.WriteLine("La directory non esiste.");
+    }
+    ;
 
 }
 
 void BackupRicorsivo(string directorySelezionata, string currentBackupDirectory)
 {
-    if(!Directory.Exists(directorySelezionata))
+    if (!Directory.Exists(directorySelezionata))
     {
         Console.WriteLine($"Attenzione la cartella {directorySelezionata} non esiste, uscita da Backup()");
         return;
@@ -173,12 +130,12 @@ void BackupRicorsivo(string directorySelezionata, string currentBackupDirectory)
     string[] directories = Directory.GetDirectories(directorySelezionata);
     Console.WriteLine($"Stampa metodo backup, directorySelezionata : {directorySelezionata}  currentBackupDireectory: {currentBackupDirectory}");
 
-    foreach( string currentDirectory in directories)
+    foreach (string currentDirectory in directories)
     {
         string targetPath = Path.Combine(currentBackupDirectory, currentDirectory);
         Directory.CreateDirectory(targetPath);
     }
-    BackupRicorsivo(percorsoCartella,currentBackupDirectory);
+    BackupRicorsivo(percorsoCartella, currentBackupDirectory);
     //CopyFiles(variabili);
 
 }

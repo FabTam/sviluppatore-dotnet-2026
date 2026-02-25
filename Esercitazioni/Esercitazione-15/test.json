@@ -1,10 +1,4 @@
 {
-  "nome": "Partecipante1",
-  "eta": 30,
-  "presente": true,
-  "interessi": [
-    "programmazione",
-    "musica",
-    "sport"
-  ]
+  "lastId": 2,
+  "partecipante": "Enrico"
 }
