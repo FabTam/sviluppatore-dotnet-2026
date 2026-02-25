@@ -1,5 +1,6 @@
 {
   "nome": "Fabio",
   "eta": 36,
-  "presente": true
+  "presente": true,
+  "interessi" : ["musica", "sport", "fumetti"]
 }
