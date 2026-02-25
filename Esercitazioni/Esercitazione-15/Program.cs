@@ -1,4 +1,12 @@
-﻿/*
+﻿
+
+
+using System.Transactions;
+using Newtonsoft.Json;
+
+
+
+/*
 FILE JSON
 
 i Files json sono files di testo che contengono dati strutturati in un formato leggibile dall'uomo e facilmente interpretabile dalle macchine.
@@ -50,5 +58,50 @@ che permette di deserializzare il file json in un oggetto C#.
 Deserializzare significa convertire una stringa json in un oggetto C# in modo da farlo iventare un oggetto con proprietà e metodi che possiamo utilizzare nel nostro codice, cioè leggerlo.
 
 Serializzare significa convertire un oggetto in una stringa JSON, cioè scriverlo.
-Però per farlo abbiamo bisogno di una libreria: noi utilizzeremo Netwtonsoft.Json, popolare in C#.
+Però per farlo abbiamo bisogno di una libreria: noi utilizzeremo Netwtonsoft.Json, popolare in C#.cd
+
+Le librerie sono disponibili tramite package manager di .NET
 */
+
+/* DESERIALIZZARE un file json semplice
+   Il metodo JsonConvert.DeserializeObject<T>(string json) permette di deserializzare una stringa json inun oggetto di tipo T, dove T è il tipo di oggetto che vogliamo ottenere.
+   Indica un tipo generico, cioè un tipo che viene specificato al momento dell'utilizzo del metodo, in questo caso il tipo è Partecipante che è una classe C# che rappresenta la
+   struttura del file json.
+
+   Cioè non sappiamo quali sono i campi del file json, quindi non possiamo creare un oggetto con proprietà speciiche, ma possiamo creare una classe generica che rappresenta la
+   struttura del file json, quindi generalmente si usa var per indicare che il tipo è generico.
+*/
+
+
+
+string path               = @"test.json";
+string json               = File.ReadAllText(path); // leggo il contenuto del file json
+var partecipante          = JsonConvert.DeserializeObject<dynamic>(json);  // deserializzazione tramite JsonConvert
+
+// una volta deserializzato, posso accedere ai campi dell'oggetto.
+
+Console.WriteLine($"Nome    : {partecipante.nome}");
+Console.WriteLine($"Eta     : {partecipante.eta}");
+Console.WriteLine($"Presente: {partecipante.presente}");
+
+/*
+In questo caso abbbiamo deserializzato il file json in un oggetto dinamico, quindi possiamo accedere ai campi dell'oggetto senza dover creare una rappresentazione dell'oggetto(Classe).
+*/
+
+/*
+SERIALIZZAZIONE DI UN OGGETTO IN UN FILE JSON
+*/
+
+var partecipante1 = new
+{
+    nome     = "Fabio",
+    eta      = 36,
+    presente = true,
+};
+
+string json1 = JsonConvert.SerializeObject(partecipante1,Formatting.Indented); // serializzo e indento
+File.WriteAllText(@"test.json",json1); // scrivo al percorso del file
+
+
+
+
