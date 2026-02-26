@@ -1,37 +1,41 @@
 ﻿
 using Newtonsoft.Json;
 
-/* ESERCITAZIONE 1
- - Programma che usa un file json come metodo di persistenza dell'id dell'ultimo partecipante creato, in modo da poterlo incrementare ad ogni creazione di un nuovo partecipante.
- 
- - Crea un file json chiamato lastId.json con 
- {
-    "lastId" : 0
- }
-
- Dizionario int string dove la chiave è lastId e il valore è un int.
- 
-
- - L'applicazione legge il file json
- - deserializza il contenuto in un oggetto
- - incrementa il valore di lastId
- - serializza l'oggetto aggiornato
- - lo scriverà nuovamente sul file
+/* ESERCITAZIONE 2
+   - Legge i dati inseriti da un utente
+   - crea l'oggetto con i dati inseriti dall'utente
+   - salva il file in un partecipante json
 */
 
 
-string path = @"lastId.json";
-string json = File.ReadAllText(path);
 
-var partecipante = JsonConvert.DeserializeObject<dynamic>(json);
+string lastIdJson = File.ReadAllText(@"lastId.json");
 
-Console.WriteLine("Inserisci un partecipante");
-string input = Console.ReadLine();
+Console.Write("Nome:");
+string nome = Console.ReadLine();
+Console.Write("Età: ");
+int eta = int.Parse(Console.ReadLine());
+Console.Write("Presente(true/false)");
+bool presente = bool.Parse(Console.ReadLine());
 
-partecipante.partecipante = input;
-partecipante.lastId += 1;
-json = JsonConvert.SerializeObject(partecipante, Formatting.Indented);
-File.WriteAllText(path, json);
+// costruisco l'oggetto partecipante con i dati inseriti dall'utente
 
-Console.WriteLine($"Nome partecipante inserito: {partecipante.partecipante}");
-Console.WriteLine($"Id ultimo partecipante inserito: {partecipante.lastId}");
+var nuovoPartecipante = new
+{
+   id = JsonConvert.DeserializeObject<dynamic>(lastIdJson).lastId +1,
+   nome = nome,
+   eta = eta,
+   presente = presente
+};
+
+// serializzo
+string nuovoPartecipanteJson = JsonConvert.SerializeObject(nuovoPartecipante, Formatting.Indented);
+// scrivo su un file json
+File.WriteAllText(@"partecipante.json", nuovoPartecipanteJson);
+//aggiorno il valore di last id
+var lastIdObj = JsonConvert.DeserializeObject<dynamic>(lastIdJson);
+lastIdObj.lastId = (int)lastIdObj.lastId +1;
+// serializzo l'oggetto aggiornato
+string updatedLastIdJson = JsonConvert.SerializeObject(lastIdObj, Formatting.Indented);
+// scrivo la stringa json aggiornata su un file
+File.WriteAllText(@"lastId.json", updatedLastIdJson);
