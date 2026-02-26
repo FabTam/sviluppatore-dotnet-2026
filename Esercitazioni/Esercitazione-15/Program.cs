@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 */
 
 
-string path = @"test.json";
+string path = @"lastId.json";
 string json = File.ReadAllText(path);
 
 var partecipante = JsonConvert.DeserializeObject<dynamic>(json);
@@ -34,4 +34,4 @@ json = JsonConvert.SerializeObject(partecipante, Formatting.Indented);
 File.WriteAllText(path, json);
 
 Console.WriteLine($"Nome partecipante inserito: {partecipante.partecipante}");
-Console.WriteLine($"Id partecipante: {partecipante.lastId}");
+Console.WriteLine($"Id ultimo partecipante inserito: {partecipante.lastId}");
