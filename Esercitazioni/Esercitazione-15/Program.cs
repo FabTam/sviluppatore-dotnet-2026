@@ -1,6 +1,5 @@
 ﻿
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 /* ESERCITAZIONE 3
    Implementazione dell'esercitazione v2 con un file json complesso che contine anche una lista di interessi, quindi il partecipante avrà questa struttura
@@ -66,6 +65,8 @@ void Menu()
 Menu();
 
 
+
+
 string LeggiInput(string messaggio)
 {
    Console.WriteLine(messaggio);
@@ -78,14 +79,14 @@ string LeggiInput(string messaggio)
 void StampaListaPartecipanti()
 {
    string listaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
-   List<dynamic> listaPartecipantiObj = JsonConvert.DeserializeObject<List<dynamic>>(listaPartecipanti);
+   List<Contatto> listaPartecipantiObj = JsonConvert.DeserializeObject<List<Contatto>>(listaPartecipanti);
 
    Console.WriteLine("Tabella partecipanti");
    Console.WriteLine(new string('-', 60));
    Console.WriteLine("ID\t NOME\t ETA\t PRESENTE\t INTERESSI");
    foreach (var p in listaPartecipantiObj)
    {
-      Console.WriteLine($"{p.id} | {p.nome} | {p.eta} |{p.presente} | {string.Join(", ", p.interessi)}");
+      Console.WriteLine($"{p.Id} | {p.Nome} | {p.Eta} |{p.Presente} | {string.Join(", ", p.Interessi)}");
    }
 
 
@@ -97,7 +98,7 @@ void InserisciPartecipante()
    Console.Write("Nome:");
    string nome = Console.ReadLine();
    Console.Write("Età: ");
-   int eta = int.Parse(Console.ReadLine());
+   string eta = Console.ReadLine();
    Console.Write("Presente(true/false)");
    bool presente = bool.Parse(Console.ReadLine());
    Console.Write("Inserisci gli interessi, se più di uno separali con una virgola:");
@@ -106,24 +107,24 @@ void InserisciPartecipante()
 
    string lastIdJson = File.ReadAllText(@"lastId.json");
 
-   var lastIdObj = JsonConvert.DeserializeObject<dynamic>(lastIdJson);
-   lastIdObj.lastId = (int)lastIdObj.lastId + 1;
+   LastId lastIdObj = JsonConvert.DeserializeObject<LastId>(lastIdJson);
+   lastIdObj.Id = lastIdObj.Id + 1;
    string updatedLastId = JsonConvert.SerializeObject(lastIdObj, Formatting.Indented);
    File.WriteAllText(@"lastId.json", updatedLastId);
 
-   var nuovoPartecipante = new
+   Contatto nuovoPartecipante = new()
    {
-      id = lastIdObj.lastId,
-      nome = nome,
-      eta = eta,
-      presente = presente,
-      interessi = interessi,
+      Id = lastIdObj.Id,
+      Nome = nome,
+      Eta = eta,
+      Presente = presente,
+      Interessi = interessi,
    };
 
    //leggo la lista.
    string listaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
    // converto il json in un oggetto lista.
-   List<dynamic> listaPartecipantiObj = JsonConvert.DeserializeObject<List<dynamic>>(listaPartecipanti);
+   List<Contatto> listaPartecipantiObj = JsonConvert.DeserializeObject<List<Contatto>>(listaPartecipanti);
    // aggiungo il partecipante all'oggetto lista.
    listaPartecipantiObj.Add(nuovoPartecipante);
 
@@ -146,25 +147,25 @@ void ModificaPartecipante()
    int id = int.Parse(Console.ReadLine());
 
    string listapartecipanti = File.ReadAllText(@"listapartecipanti.json");
-   List<dynamic> listaPartecipantiDaModificareObj = JsonConvert.DeserializeObject<List<dynamic>>(listapartecipanti);
+   List<Contatto> listaPartecipantiDaModificareObj = JsonConvert.DeserializeObject<List<Contatto>>(listapartecipanti);
 
    for (int i = 0; i < listaPartecipantiDaModificareObj.Count; i++)
    {
-      if (id == (int)listaPartecipantiDaModificareObj[i].id)
+      if (id == listaPartecipantiDaModificareObj[i].Id)
       {
          string nome = LeggiInput("Modifica il nome: ");
          if (!string.IsNullOrWhiteSpace(nome))
-            listaPartecipantiDaModificareObj[i].nome = nome;
+            listaPartecipantiDaModificareObj[i].Nome = nome;
          string eta = LeggiInput("Modifica l'età:");
          if (!string.IsNullOrWhiteSpace(eta))
-            listaPartecipantiDaModificareObj[i].eta = eta;
+            listaPartecipantiDaModificareObj[i].Eta = eta;
          string presente = LeggiInput("Modifica la presenza:");
          if (!string.IsNullOrWhiteSpace(presente))
-            listaPartecipantiDaModificareObj[i].presente = presente;
+            listaPartecipantiDaModificareObj[i].Presente = bool.Parse(presente);
          string interesse = LeggiInput("Modifica gli interessi:");
          string[] interessi = interesse.Split(",");
          if (!string.IsNullOrWhiteSpace(interesse))
-            listaPartecipantiDaModificareObj[i].interessi = JArray.FromObject(interessi);
+            listaPartecipantiDaModificareObj[i].Interessi = interessi.ToList();
 
       }
 
@@ -192,3 +193,16 @@ void EliminaPartecipante()
 }
 
 
+public class LastId
+{
+    public int Id { get; set; }
+}
+
+public class Contatto
+{
+    public int Id { get; set; }
+    public string Nome { get; set; }
+    public string Eta { get; set; }
+    public bool Presente { get; set; }
+    public List<string> Interessi { get; set; }
+}

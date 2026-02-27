@@ -1,1 +1,1 @@
-[{"id":1,"nome":"Fabio","eta":35,"presente":false,"interessi":["calcio"]}]
+[{"Id":1,"Nome":"Fabio","Eta":"35","Presente":false,"Interessi":["calcio"]},{"Id":3,"Nome":"Mario","Eta":"45","Presente":false,"Interessi":["libri"]},{"Id":4,"Nome":"Fabio","Eta":"45","Presente":false,"Interessi":["a"]}]
