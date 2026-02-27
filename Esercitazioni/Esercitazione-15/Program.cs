@@ -24,20 +24,46 @@ void Menu()
 {
    while (true)
    {
-      Console.Write("Premi 1 per visualizzare la lista dei partecipanti");
-      Console.Write("Premi 2 per inserire un partecipante");
-      Console.Write("Premi 3 per modificare un partecipante");
-      Console.Write("Premi 4 per eliminare un partecipante");
-      Console.Write("Premi 5 per uscire");
+      Console.WriteLine("Premi 1 per visualizzare la lista dei partecipanti");
+      Console.WriteLine("Premi 2 per inserire un partecipante");
+      Console.WriteLine("Premi 3 per modificare un partecipante");
+      Console.WriteLine("Premi 4 per eliminare un partecipante");
+      Console.WriteLine("Premi 5 per uscire");
       string input = Console.ReadLine();
       // inserire uno switch case
+
+      switch (input)
+      {
+         case "1":
+            StampaListaPartecipanti();
+            break;
+
+         case "2":
+            InserisciPartecipante();
+            break;
+
+         case "3":
+            ModificaPartecipante();
+            break;
+
+         case "4":
+            EliminaPartecipante();
+            break;
+
+         case "5": 
+         return;
+
+         default:
+         Console.WriteLine("Scelta non valida!");
+            break;
+
+      }
    }
 
 
 }
 
-string lastIdJson = File.ReadAllText(@"lastId.json");
-
+Menu();
 
 
 string LeggiInput(string messaggio)
@@ -78,6 +104,8 @@ void InserisciPartecipante()
    string interesse = Console.ReadLine();
    List<string> interessi = interesse.Split(",").ToList();
 
+   string lastIdJson = File.ReadAllText(@"lastId.json");
+
    var lastIdObj = JsonConvert.DeserializeObject<dynamic>(lastIdJson);
    lastIdObj.lastId = (int)lastIdObj.lastId + 1;
    string updatedLastId = JsonConvert.SerializeObject(lastIdObj, Formatting.Indented);
@@ -108,7 +136,6 @@ void InserisciPartecipante()
 
 }
 
-EliminaPartecipante();
 
 void ModificaPartecipante()
 {
@@ -149,7 +176,7 @@ void ModificaPartecipante()
 
 void EliminaPartecipante()
 {
-    Console.Write("Inserisci l'ID del partecipante da eliminare: ");
+   Console.Write("Inserisci l'ID del partecipante da eliminare: ");
    int id = int.Parse(Console.ReadLine());
 
    string listapartecipanti = File.ReadAllText(@"listapartecipanti.json");
@@ -157,8 +184,8 @@ void EliminaPartecipante()
 
    for (int i = 0; i < listaPartecipantiDaModificareObj.Count; i++)
    {
-      if( listaPartecipantiDaModificareObj[i].id == id)
-        listaPartecipantiDaModificareObj.Remove(listaPartecipantiDaModificareObj[i]);
+      if (listaPartecipantiDaModificareObj[i].id == id)
+         listaPartecipantiDaModificareObj.Remove(listaPartecipantiDaModificareObj[i]);
    }
    string listaPartecipantiAggiornata = JsonConvert.SerializeObject(listaPartecipantiDaModificareObj);
    File.WriteAllText(@"listapartecipanti.json", listaPartecipantiAggiornata);
