@@ -1,1 +1,31 @@
-[{"Id":1,"Nome":"Fabio","Eta":"35","Presente":false,"Interessi":["calcio"]},{"Id":3,"Nome":"Mario","Eta":"45","Presente":false,"Interessi":["libri"]},{"Id":4,"Nome":"Fabio","Eta":"45","Presente":false,"Interessi":["a"]}]
+[
+  {
+    "Id": 1,
+    "Nome": "Fabio",
+    "Eta": "35",
+    "Presente": false,
+    "Interessi": [
+      "calcio"
+    ]
+  },
+  {
+    "Id": 3,
+    "Nome": "Fabietto",
+    "Eta": "45",
+    "Presente": false,
+    "Interessi": [
+      "a"
+    ]
+  },
+  {
+    "Id": 5,
+    "Nome": "Marco",
+    "Eta": "45",
+    "Presente": false,
+    "Interessi": [
+      "calcio",
+      "birra",
+      "vino"
+    ]
+  }
+]

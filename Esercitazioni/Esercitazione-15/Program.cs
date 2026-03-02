@@ -15,9 +15,19 @@ using Newtonsoft.Json;
    - i partecipanti devono essere aggiunti ad un unico file di partecipanti che contiene una lista di partecipanti
 */
 
+string jsonListaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
+List<Contatto> listaPartecipanti = JsonConvert.DeserializeObject<List<Contatto>>(jsonListaPartecipanti);
+
+
+Menu();
 
 
 
+void SalvaLista()
+{
+   string listaPartecipantiAggiornata = JsonConvert.SerializeObject(listaPartecipanti, Formatting.Indented);
+   File.WriteAllText(@"listapartecipanti.json", listaPartecipantiAggiornata);
+}
 
 void Menu()
 {
@@ -26,8 +36,11 @@ void Menu()
       Console.WriteLine("Premi 1 per visualizzare la lista dei partecipanti");
       Console.WriteLine("Premi 2 per inserire un partecipante");
       Console.WriteLine("Premi 3 per modificare un partecipante");
-      Console.WriteLine("Premi 4 per eliminare un partecipante");
-      Console.WriteLine("Premi 5 per uscire");
+      Console.WriteLine("Premi 4 per modificare gli interessi di un partecipante");
+      Console.WriteLine("Premi 5 per eliminare gli interessi di un partecipante");
+      Console.WriteLine("Premi 6 per eliminare un partecipante");
+
+      Console.WriteLine("Premi 7 per uscire");
       string input = Console.ReadLine();
       // inserire uno switch case
 
@@ -46,14 +59,22 @@ void Menu()
             break;
 
          case "4":
+            ModificaInteressiPartecipante();
+            break;
+
+         case "5":
+            EliminaInteressePartecipante();
+            break;
+
+         case "6":
             EliminaPartecipante();
             break;
 
-         case "5": 
-         return;
+         case "7":
+            return;
 
          default:
-         Console.WriteLine("Scelta non valida!");
+            Console.WriteLine("Scelta non valida!");
             break;
 
       }
@@ -78,15 +99,12 @@ string LeggiInput(string messaggio)
 
 void StampaListaPartecipanti()
 {
-   string listaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
-   List<Contatto> listaPartecipantiObj = JsonConvert.DeserializeObject<List<Contatto>>(listaPartecipanti);
-
    Console.WriteLine("Tabella partecipanti");
    Console.WriteLine(new string('-', 60));
-   Console.WriteLine("ID\t NOME\t ETA\t PRESENTE\t INTERESSI");
-   foreach (var p in listaPartecipantiObj)
+   Console.WriteLine($"{"ID",-4} {"NOME",-10} {"ETA",-5} {"PRESENTE",-10} {"INTERESSI",-20}");
+   foreach (var p in listaPartecipanti)
    {
-      Console.WriteLine($"{p.Id} | {p.Nome} | {p.Eta} |{p.Presente} | {string.Join(", ", p.Interessi)}");
+      Console.WriteLine($"{p.Id,-4}  {p.Nome,-8}  {p.Eta,-5} {p.Presente,-10}  {string.Join(", ", p.Interessi)}");
    }
 
 
@@ -121,88 +139,134 @@ void InserisciPartecipante()
       Interessi = interessi,
    };
 
-   //leggo la lista.
-   string listaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
-   // converto il json in un oggetto lista.
-   List<Contatto> listaPartecipantiObj = JsonConvert.DeserializeObject<List<Contatto>>(listaPartecipanti);
-   // aggiungo il partecipante all'oggetto lista.
-   listaPartecipantiObj.Add(nuovoPartecipante);
+   listaPartecipanti.Add(nuovoPartecipante);
 
-   // ora che la lista è stata modificata la converto in un json.
-   string listaPartecipantiAggiornata = JsonConvert.SerializeObject(listaPartecipantiObj, Formatting.Indented);
-
-   // riscrivo la lista aggiornata.
-   File.WriteAllText(@"listapartecipanti.json", listaPartecipantiAggiornata);
+   SalvaLista();
 
 
 }
+
+Contatto ScegliPartecipante()
+{
+   int scelta = int.Parse(LeggiInput("Inserisci l'id del partecipante:"));
+
+   foreach (var p in listaPartecipanti)
+   {
+      if (p.Id == scelta)
+      {
+         Console.WriteLine($"Hai scelto l'id {p.Id}");
+         return p;
+      }
+   }
+
+   Console.WriteLine("Partecipante non trovato");
+   return null;
+}
+
 
 
 void ModificaPartecipante()
 {
    // Stampo la lista dei partecipanti
    StampaListaPartecipanti();
+   var partecipante = ScegliPartecipante();
 
-   Console.Write("Inserisci l'ID del partecipante da modificare: ");
-   int id = int.Parse(Console.ReadLine());
-
-   string listapartecipanti = File.ReadAllText(@"listapartecipanti.json");
-   List<Contatto> listaPartecipantiDaModificareObj = JsonConvert.DeserializeObject<List<Contatto>>(listapartecipanti);
-
-   for (int i = 0; i < listaPartecipantiDaModificareObj.Count; i++)
+   for (int i = 0; i < listaPartecipanti.Count; i++)
    {
-      if (id == listaPartecipantiDaModificareObj[i].Id)
+      if (partecipante.Id == listaPartecipanti[i].Id)
       {
          string nome = LeggiInput("Modifica il nome: ");
          if (!string.IsNullOrWhiteSpace(nome))
-            listaPartecipantiDaModificareObj[i].Nome = nome;
+            listaPartecipanti[i].Nome = nome;
          string eta = LeggiInput("Modifica l'età:");
          if (!string.IsNullOrWhiteSpace(eta))
-            listaPartecipantiDaModificareObj[i].Eta = eta;
+            listaPartecipanti[i].Eta = eta;
          string presente = LeggiInput("Modifica la presenza:");
          if (!string.IsNullOrWhiteSpace(presente))
-            listaPartecipantiDaModificareObj[i].Presente = bool.Parse(presente);
+            listaPartecipanti[i].Presente = bool.Parse(presente);
          string interesse = LeggiInput("Modifica gli interessi:");
          string[] interessi = interesse.Split(",");
          if (!string.IsNullOrWhiteSpace(interesse))
-            listaPartecipantiDaModificareObj[i].Interessi = interessi.ToList();
+            listaPartecipanti[i].Interessi = interessi.ToList();
 
       }
 
    }
-   string listaPartecipantiDaModificare = JsonConvert.SerializeObject(listaPartecipantiDaModificareObj, Formatting.Indented);
-   File.WriteAllText(@"listapartecipanti.json", listaPartecipantiDaModificare);
+   SalvaLista();
+
 
 }
 
 void EliminaPartecipante()
 {
-   Console.Write("Inserisci l'ID del partecipante da eliminare: ");
-   int id = int.Parse(Console.ReadLine());
+   StampaListaPartecipanti();
+   var partecipante = ScegliPartecipante();
 
-   string listapartecipanti = File.ReadAllText(@"listapartecipanti.json");
-   List<dynamic> listaPartecipantiDaModificareObj = JsonConvert.DeserializeObject<List<dynamic>>(listapartecipanti);
-
-   for (int i = 0; i < listaPartecipantiDaModificareObj.Count; i++)
+   if (partecipante == null)
    {
-      if (listaPartecipantiDaModificareObj[i].id == id)
-         listaPartecipantiDaModificareObj.Remove(listaPartecipantiDaModificareObj[i]);
+      Console.WriteLine("Id non presente");
+      return;
    }
-   string listaPartecipantiAggiornata = JsonConvert.SerializeObject(listaPartecipantiDaModificareObj);
-   File.WriteAllText(@"listapartecipanti.json", listaPartecipantiAggiornata);
+
+   listaPartecipanti.Remove(partecipante);
+
+   SalvaLista();
+
 }
+
+void ModificaInteressiPartecipante()
+{
+   StampaListaPartecipanti();
+
+   var partecipante = ScegliPartecipante();
+   if (partecipante == null)
+      return;
+
+   partecipante.Interessi = LeggiInput("Inserisci gli interessi separati da virgola:").Split(",").ToList();
+   SalvaLista();
+
+}
+
+
+void EliminaInteressePartecipante()
+{
+   StampaListaPartecipanti();
+   var partecipante = ScegliPartecipante();
+
+   if (partecipante == null)
+      return;
+
+   for (int j = 0; j < partecipante.Interessi.Count; j++)
+   {
+      Console.WriteLine($"{j} - {partecipante.Interessi[j]}");
+   }
+
+   int scelta = int.Parse(LeggiInput("Scegli quale interesse eliminare"));
+
+   if (scelta < 0 || scelta >= partecipante.Interessi.Count)
+   {
+      Console.WriteLine("Indice non valido");
+      return;
+   }
+
+   partecipante.Interessi.RemoveAt(scelta);
+
+   SalvaLista();
+
+}
+
 
 
 public class LastId
 {
-    public int Id { get; set; }
+   public int Id { get; set; }
 }
 
 public class Contatto
 {
-    public int Id { get; set; }
-    public string Nome { get; set; }
-    public string Eta { get; set; }
-    public bool Presente { get; set; }
-    public List<string> Interessi { get; set; }
+   public int Id { get; set; }
+   public string Nome { get; set; }
+   public string Eta { get; set; }
+   public bool Presente { get; set; }
+   public List<string> Interessi { get; set; }
 }
