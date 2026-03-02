@@ -1,4 +1,7 @@
 ﻿
+using System.ComponentModel.Design.Serialization;
+using System.Diagnostics.Tracing;
+using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
 /* ESERCITAZIONE 3
@@ -19,9 +22,11 @@ string jsonListaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
 List<Contatto> listaPartecipanti = JsonConvert.DeserializeObject<List<Contatto>>(jsonListaPartecipanti);
 
 
+var lastIdController = new lastIdController();
+int nextId = lastIdController.GetNextId();
+Console.WriteLine($"il prossimo ID è : {nextId}");
+
 Menu();
-
-
 
 void SalvaLista()
 {
@@ -83,7 +88,8 @@ void Menu()
 
 }
 
-Menu();
+
+
 
 
 
@@ -269,4 +275,150 @@ public class Contatto
    public string Eta { get; set; }
    public bool Presente { get; set; }
    public List<string> Interessi { get; set; }
+}
+
+public class lastIdController
+{
+   // private non dà accessibilità ad altre parti del programma
+   // readonly per indicare che il valore non può essere modificato dopo l'inizializzazione
+   private readonly string path = "lastId.json";
+   private LastId lastIdObj;
+
+   // indico il costruttore della classe
+
+   public lastIdController()
+   {
+      if (!File.Exists(path))
+      {
+         lastIdObj = new LastId { Id = 0 };
+         Salva();
+      }
+      else
+      {
+         string json = File.ReadAllText(path);
+         lastIdObj = JsonConvert.DeserializeObject<LastId>(json) ?? new LastId { Id = 0 };
+      }
+   }
+
+   public int GetNextId()
+   {
+      lastIdObj.Id++;
+      Salva();
+      return lastIdObj.Id;
+
+   }
+
+   private void Salva()
+   {
+      string json = JsonConvert.SerializeObject(lastIdObj, Formatting.Indented);
+      File.WriteAllText(path, json);
+   }
+}
+
+public class ContattiController
+{
+   // queste sono le variabili di istanza della classe ContattiController, cioè le variabili che appartengono a ogni istanza
+   private readonly string path = "listapartecipanti.json";
+   private List<Contatto> contatti;
+   private lastIdController lastIdController;
+
+   public ContattiController()
+   {
+      lastIdController = new lastIdController();
+      if (!File.Exists(path))
+      {
+         contatti = new List<Contatto>();
+         Salva();
+      }
+      else
+      {
+         string json = File.ReadAllText(path);
+         contatti = JsonConvert.DeserializeObject<List<Contatto>>(json) ?? new List<Contatto>();
+      }
+   }
+
+   public List<Contatto> GetContatti()
+   {
+      return contatti;
+   }
+
+   private void Salva()
+   {
+      string json = JsonConvert.SerializeObject(contatti, Formatting.Indented);
+      File.WriteAllText(path, json);
+   }
+
+   public void AggiungiContatto(string nome, string eta, bool presente, List<string> interessi)
+   {
+      Contatto nuovoContatto = new Contatto
+      {
+         Id = lastIdController.GetNextId(),
+         Nome = nome,
+         Eta = eta,
+         Presente = presente,
+         Interessi = interessi
+      };
+
+      contatti.Add(nuovoContatto);
+      Salva();
+   }
+
+   public void ModificaContatto(int id, string nome, string eta, bool presente, List<string> interessi)
+   {
+      Contatto contattoEsistente = null;
+      foreach (var c in contatti)
+      {
+         if (c.Id == id)
+         {
+            contattoEsistente = c;
+            break;
+         }
+      }
+      if (contattoEsistente != null)
+      {
+         contattoEsistente.Nome = nome;
+         contattoEsistente.Eta = eta;
+         contattoEsistente.Presente = presente;
+         contattoEsistente.Interessi = interessi;
+         Salva();
+      }
+   }
+
+   public void EliminaContatto(int id)
+   {
+      Contatto contattoEsistente = null;
+      foreach (var c in contatti)
+      {
+         if (c.Id == id)
+         {
+            contattoEsistente = c;
+            break;
+         }
+      }
+      if (contattoEsistente != null)
+      {
+         contatti.Remove(contattoEsistente);
+         Salva();
+
+      }
+   }
+
+public Contatto VisualizzaContatto(int id) // uso ? per indicare che il metodo può restituire un oggetto Confatto o null
+   {
+      Contatto? contattoEsistente = null;
+      foreach(var c in contatti)
+      {
+         if(c.Id == id)
+         {
+            contattoEsistente = c;
+            break;
+         }
+         
+      }
+      if(contattoEsistente == null)
+      {
+         throw new Exception($"Contatto con ID {id} non trovato");
+      }
+      return contattoEsistente;
+   }
 }
