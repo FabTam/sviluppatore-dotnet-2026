@@ -27,5 +27,14 @@
       "birra",
       "vino"
     ]
+  },
+  {
+    "Id": 7,
+    "Nome": "Fanuel",
+    "Eta": "0",
+    "Presente": false,
+    "Interessi": [
+      "droghe"
+    ]
   }
 ]

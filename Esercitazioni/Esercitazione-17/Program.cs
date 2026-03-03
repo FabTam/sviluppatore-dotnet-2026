@@ -26,3 +26,32 @@ class Program
         // codice del main
     }
 }
+
+// Le classi statiche vanno in services, le altre vanno in cartelle come Controllers e Models, al cui interno avremo i file .cs delle varie classi.
+
+/*
+ NAMESPACES
+
+ I namespaces sono utilizzati per oranizzare le classi e i metodi in gruppi logici, evitando conflitti di nomi tra classi con lo stesso nome.
+ Un namespace è definito utilizzando la parola chiave namespace, seguita dal nome del namespace
+
+*/
+
+namespace MyApplication
+{
+    
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            
+        }
+    }
+}
+
+/*
+  In questo caso il file Program comunica agli altri file che la classe Program appartiene al namespace MyApplication. In questo modo, se in un altro file abbiamo una classe con lo stesso nome,
+  ad esempio Program possiamo distinguirli con il namespace.
+
+  Quando vogliamo usare una determinata classe definita da un namespace dobbiamo usare usingMyApplication.
+*/
