@@ -25,6 +25,7 @@ Vantaggi nell'utilizzo di classi modello:
 // DESERIALIZZAZIONE DI UN FILE JSON CON UNA CLASSE MODELLO.
 
 
+using System.Dynamic;
 using Newtonsoft.Json;
 
 string pathContatto = @"contatti.json";
@@ -63,3 +64,43 @@ public class Contatto
     public List<string> Interessi { get; set; }
 }
 
+/*
+CLASSI STATICHE
+
+Classi che non possono essere istanziate e contengono solo membri statici.
+Sono utili soprattutto quando si vuole creare una classe che fornisce funzionalità comuni o utility, come ad esempio una classe che gestisce la lettura e la scritura di file JSON.
+Non c'è necessità di istanziare la classe, basta chiamare il metodo della classe:
+
+Public static int nextGenId
+{
+   // blocco di codice
+}
+
+Classe.nextGenId();
+*/
+
+// Esempio di classe statica, senza costruttore visto che non deve essere istanziata.
+
+public static class JsonHelper
+{
+    public static void Salva(string path, object obj)
+    {
+        string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+        File.WriteAllText(path, json);
+    }
+
+    public static T Leggi<T>(string path)
+    {
+        // T è un tipo di dato  generico che può essere qualsiasi tipo di dato
+        
+        if(!File.Exists(path))
+        {
+            return default(T);
+        }
+
+        string json = File.ReadAllText(path);
+        return JsonConvert.DeserializeObject<T>(json);
+    }
+
+
+}

@@ -18,21 +18,11 @@ using Newtonsoft.Json;
    - i partecipanti devono essere aggiunti ad un unico file di partecipanti che contiene una lista di partecipanti
 */
 
-string jsonListaPartecipanti = File.ReadAllText(@"listapartecipanti.json");
-List<Contatto> listaPartecipanti = JsonConvert.DeserializeObject<List<Contatto>>(jsonListaPartecipanti);
+ContattiController controller = new ContattiController();
 
-
-var lastIdController = new lastIdController();
-int nextId = lastIdController.GetNextId();
-Console.WriteLine($"il prossimo ID è : {nextId}");
 
 Menu();
 
-void SalvaLista()
-{
-   string listaPartecipantiAggiornata = JsonConvert.SerializeObject(listaPartecipanti, Formatting.Indented);
-   File.WriteAllText(@"listapartecipanti.json", listaPartecipantiAggiornata);
-}
 
 void Menu()
 {
@@ -108,7 +98,7 @@ void StampaListaPartecipanti()
    Console.WriteLine("Tabella partecipanti");
    Console.WriteLine(new string('-', 60));
    Console.WriteLine($"{"ID",-4} {"NOME",-10} {"ETA",-5} {"PRESENTE",-10} {"INTERESSI",-20}");
-   foreach (var p in listaPartecipanti)
+   foreach (var p in controller.GetContatti())
    {
       Console.WriteLine($"{p.Id,-4}  {p.Nome,-8}  {p.Eta,-5} {p.Presente,-10}  {string.Join(", ", p.Interessi)}");
    }
@@ -129,26 +119,7 @@ void InserisciPartecipante()
    string interesse = Console.ReadLine();
    List<string> interessi = interesse.Split(",").ToList();
 
-   string lastIdJson = File.ReadAllText(@"lastId.json");
-
-   LastId lastIdObj = JsonConvert.DeserializeObject<LastId>(lastIdJson);
-   lastIdObj.Id = lastIdObj.Id + 1;
-   string updatedLastId = JsonConvert.SerializeObject(lastIdObj, Formatting.Indented);
-   File.WriteAllText(@"lastId.json", updatedLastId);
-
-   Contatto nuovoPartecipante = new()
-   {
-      Id = lastIdObj.Id,
-      Nome = nome,
-      Eta = eta,
-      Presente = presente,
-      Interessi = interessi,
-   };
-
-   listaPartecipanti.Add(nuovoPartecipante);
-
-   SalvaLista();
-
+   controller.AggiungiContatto(nome, eta, presente, interessi);
 
 }
 
@@ -156,7 +127,7 @@ Contatto ScegliPartecipante()
 {
    int scelta = int.Parse(LeggiInput("Inserisci l'id del partecipante:"));
 
-   foreach (var p in listaPartecipanti)
+   foreach (var p in controller.GetContatti())
    {
       if (p.Id == scelta)
       {
@@ -175,48 +146,30 @@ void ModificaPartecipante()
 {
    // Stampo la lista dei partecipanti
    StampaListaPartecipanti();
-   var partecipante = ScegliPartecipante();
+   int id = int.Parse(LeggiInput("Inserisci l'id del partecipante da modificare:"));
+   string nome = LeggiInput("Modifica il nome: ");
+   string eta = LeggiInput("Modifica l'età:");
+   bool presente = bool.Parse(LeggiInput("Modifica la presenza:"));
+   string interesse = LeggiInput("Modifica gli interessi:");
+   string inputInteressi = LeggiInput("Interessi separati da virgola:");
+   List<string> interessi = inputInteressi.Split(",").ToList();
 
-   for (int i = 0; i < listaPartecipanti.Count; i++)
-   {
-      if (partecipante.Id == listaPartecipanti[i].Id)
-      {
-         string nome = LeggiInput("Modifica il nome: ");
-         if (!string.IsNullOrWhiteSpace(nome))
-            listaPartecipanti[i].Nome = nome;
-         string eta = LeggiInput("Modifica l'età:");
-         if (!string.IsNullOrWhiteSpace(eta))
-            listaPartecipanti[i].Eta = eta;
-         string presente = LeggiInput("Modifica la presenza:");
-         if (!string.IsNullOrWhiteSpace(presente))
-            listaPartecipanti[i].Presente = bool.Parse(presente);
-         string interesse = LeggiInput("Modifica gli interessi:");
-         string[] interessi = interesse.Split(",");
-         if (!string.IsNullOrWhiteSpace(interesse))
-            listaPartecipanti[i].Interessi = interessi.ToList();
 
-      }
+   controller.ModificaContatto(id, nome, eta, presente, interessi);
 
-   }
-   SalvaLista();
+
 
 
 }
 
+
 void EliminaPartecipante()
 {
    StampaListaPartecipanti();
-   var partecipante = ScegliPartecipante();
+   int id = int.Parse(LeggiInput("Inserisci l'id del partecipante da eliminare:"));
+   controller.VisualizzaContatto(id);
+   controller.EliminaContatto(id);
 
-   if (partecipante == null)
-   {
-      Console.WriteLine("Id non presente");
-      return;
-   }
-
-   listaPartecipanti.Remove(partecipante);
-
-   SalvaLista();
 
 }
 
@@ -229,7 +182,6 @@ void ModificaInteressiPartecipante()
       return;
 
    partecipante.Interessi = LeggiInput("Inserisci gli interessi separati da virgola:").Split(",").ToList();
-   SalvaLista();
 
 }
 
@@ -257,7 +209,6 @@ void EliminaInteressePartecipante()
 
    partecipante.Interessi.RemoveAt(scelta);
 
-   SalvaLista();
 
 }
 
@@ -288,15 +239,9 @@ public class lastIdController
 
    public lastIdController()
    {
-      if (!File.Exists(path))
+
       {
-         lastIdObj = new LastId { Id = 0 };
-         Salva();
-      }
-      else
-      {
-         string json = File.ReadAllText(path);
-         lastIdObj = JsonConvert.DeserializeObject<LastId>(json) ?? new LastId { Id = 0 };
+         lastIdObj = JsonHelper.Leggi<LastId>(path) ?? new LastId { Id = 0 };
       }
    }
 
@@ -310,8 +255,7 @@ public class lastIdController
 
    private void Salva()
    {
-      string json = JsonConvert.SerializeObject(lastIdObj, Formatting.Indented);
-      File.WriteAllText(path, json);
+      JsonHelper.Salva(path, lastIdObj);
    }
 }
 
@@ -325,16 +269,7 @@ public class ContattiController
    public ContattiController()
    {
       lastIdController = new lastIdController();
-      if (!File.Exists(path))
-      {
-         contatti = new List<Contatto>();
-         Salva();
-      }
-      else
-      {
-         string json = File.ReadAllText(path);
-         contatti = JsonConvert.DeserializeObject<List<Contatto>>(json) ?? new List<Contatto>();
-      }
+      contatti = JsonHelper.Leggi<List<Contatto>>(path) ?? new List<Contatto>();
    }
 
    public List<Contatto> GetContatti()
@@ -342,11 +277,6 @@ public class ContattiController
       return contatti;
    }
 
-   private void Salva()
-   {
-      string json = JsonConvert.SerializeObject(contatti, Formatting.Indented);
-      File.WriteAllText(path, json);
-   }
 
    public void AggiungiContatto(string nome, string eta, bool presente, List<string> interessi)
    {
@@ -361,6 +291,11 @@ public class ContattiController
 
       contatti.Add(nuovoContatto);
       Salva();
+   }
+
+   private void Salva()
+   {
+      JsonHelper.Salva(path, contatti);
    }
 
    public void ModificaContatto(int id, string nome, string eta, bool presente, List<string> interessi)
@@ -400,25 +335,50 @@ public class ContattiController
          contatti.Remove(contattoEsistente);
          Salva();
 
+
       }
    }
 
-public Contatto VisualizzaContatto(int id) // uso ? per indicare che il metodo può restituire un oggetto Confatto o null
+   public Contatto VisualizzaContatto(int id) // uso ? per indicare che il metodo può restituire un oggetto Confatto o null
    {
       Contatto? contattoEsistente = null;
-      foreach(var c in contatti)
+      foreach (var c in contatti)
       {
-         if(c.Id == id)
+         if (c.Id == id)
          {
             contattoEsistente = c;
             break;
          }
-         
+
       }
-      if(contattoEsistente == null)
+      if (contattoEsistente == null)
       {
          throw new Exception($"Contatto con ID {id} non trovato");
       }
       return contattoEsistente;
    }
+}
+
+public static class JsonHelper
+{
+   public static void Salva(string path, object obj)
+   {
+      string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+      File.WriteAllText(path, json);
+   }
+
+   public static T Leggi<T>(string path)
+   {
+      // T è un tipo di dato  generico che può essere qualsiasi tipo di dato
+
+      if (!File.Exists(path))
+      {
+         return default(T);
+      }
+
+      string json = File.ReadAllText(path);
+      return JsonConvert.DeserializeObject<T>(json);
+   }
+
+
 }
