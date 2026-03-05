@@ -1,10 +1,14 @@
 [
   {
     "Id": 1,
-    "Nome": "Fabio",
-    "Eta": "35",
+    "Nome": "Marcolo",
+    "Eta": "45",
     "Presente": false,
-    "Interessi": []
+    "Interessi": [
+      "sale",
+      "mare",
+      "acqua"
+    ]
   },
   {
     "Id": 3,

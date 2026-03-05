@@ -50,22 +50,25 @@ in backup_prova.txt
 string originPath = ".";
 
 
-string pathCartellaData = Path.Combine(originPath, "Data");
+string pathCartellaData = Path.Combine(originPath, "Logs");
 if (!Directory.Exists(pathCartellaData))
 {
     Directory.CreateDirectory(pathCartellaData);
 }
 else
     Console.WriteLine("La cartella è già presente");
+string pathLogs = Path.Combine(pathCartellaData, "logs.txt");
 
-string[] filesInData = Directory.GetFiles(pathCartellaData);
-
-foreach (string f in filesInData)
+if (!File.Exists(pathLogs))
 {
-    string nomeFile = Path.GetFileName(f);
-    string estensioneFile = Path.GetExtension(f);
-
-    Console.WriteLine($"Questi sono i files presenti: {f}");
-    Console.WriteLine($"Questi sono i nomi dei files presenti: {nomeFile}");
-    Console.WriteLine($"Questi sono i nomi dei files presenti: {estensioneFile}");
+    File.Create(pathLogs);
 }
+else
+
+    Console.WriteLine("File esistente");
+
+DateTime avvioProgramma = DateTime.Now;
+
+string stringaDiAvvio = avvioProgramma.ToString();
+
+File.WriteAllText(pathLogs, $"Avvio programma: {stringaDiAvvio}");

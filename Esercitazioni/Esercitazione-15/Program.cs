@@ -12,7 +12,7 @@ class Program
    static void Main(string[] args)
    {
       ContattiController controller = new ContattiController();
-      
+
       Menu();
 
 
@@ -100,67 +100,89 @@ class Program
          while (true)
          {
 
-            string input = LeggiInput("Presente: inserisci true oppure false:");
-            if (bool.TryParse(input, out presente))
+            string input = LeggiInput("Presente: inserisci si oppure no:");
+            if (input == "si")
             {
+               presente = true;
                break;
             }
-
-            Console.WriteLine("Inserisci solo true o false.");
+            else if (input == "no")
+            {
+               presente = false;
+               break;
+            }
+            else
+               Console.WriteLine("Inserisci solo si o no.");
          }
-         string interesse       = LeggiInput("Inserisci gli interessi, se più di uno separali con una virgola:");
+         string interesse = LeggiInput("Inserisci gli interessi, se più di uno separali con una virgola:");
          List<string> interessi = interesse.Split(",").ToList();
 
          controller.AggiungiContatto(nome, eta, presente, interessi);
 
       }
 
-     /* Contatto ScegliPartecipante()
-      {
-         int scelta = int.Parse(LeggiInput("Inserisci l'id del partecipante:"));
+      /* Contatto ScegliPartecipante()
+       {
+          int scelta = int.Parse(LeggiInput("Inserisci l'id del partecipante:"));
 
-         foreach (var p in controller.GetContatti())
-         {
-            if (p.Id == scelta)
-            {
-               Console.WriteLine($"Hai scelto l'id {p.Id}");
-               return p;
-            }
-         }
+          foreach (var p in controller.GetContatti())
+          {
+             if (p.Id == scelta)
+             {
+                Console.WriteLine($"Hai scelto l'id {p.Id}");
+                return p;
+             }
+          }
 
-         Console.WriteLine("Partecipante non trovato");
-         return null;
-      }
-       */
+          Console.WriteLine("Partecipante non trovato");
+          return null;
+       }
+        */
 
 
       void ModificaPartecipante()
       {
          // Stampo la lista dei partecipanti
          StampaListaPartecipanti();
-         
-         int id      = int.Parse(LeggiInput("Inserisci l'id del partecipante da modificare:"));
-         controller.VisualizzaContatto(id);
+
+         int id = int.Parse(LeggiInput("Inserisci l'id del partecipante da modificare:"));
+         Contatto contatto = controller.VisualizzaContatto(id);
          string nome = LeggiInput("Modifica il nome: ");
-         string eta  = LeggiInput("Modifica l'età:");
-         bool presente;
+         string eta = LeggiInput("Modifica l'età:");
+         bool presente = contatto.Presente;
+         if (!string.IsNullOrWhiteSpace(nome))
+            contatto.Nome = nome;
+         if (!string.IsNullOrWhiteSpace(eta))
+            contatto.Eta = eta;
          while (true)
          {
-            Console.Write("Modifica (true/false): ");
-            string input = Console.ReadLine();
 
-            if (bool.TryParse(input, out presente))
+            string input = LeggiInput("Presente: inserisci si oppure no:");
+             if (string.IsNullOrWhiteSpace(input))
+                break;
+            if (input == "si")
             {
+               presente = true;
                break;
             }
-
-            Console.WriteLine("Inserisci solo true o false:");
+            else if (input == "no")
+            {
+               presente = false;
+               break;
+            }
+            else
+               Console.WriteLine("Inserisci solo si o no.");
          }
-         string inputInteressi  = LeggiInput("Inserisci gli interessi separati da virgola:");
+         string inputInteressi = LeggiInput("Inserisci gli interessi separati da virgola:");
          List<string> interessi = inputInteressi.Split(",").ToList();
+         if (!string.IsNullOrWhiteSpace(inputInteressi))
+         {
+            contatto.Interessi = interessi;
+         }
 
 
-         controller.ModificaContatto(id, nome, eta, presente, interessi);
+
+         controller.ModificaContatto(contatto.Id, nome, eta, presente, interessi);
 
       }
 
@@ -170,7 +192,8 @@ class Program
          StampaListaPartecipanti();
          int id = int.Parse(LeggiInput("Inserisci l'id del partecipante da eliminare:"));
          controller.VisualizzaContatto(id);
-         controller.EliminaContatto(id);
+         Contatto contatto = controller.VisualizzaContatto(id);
+         controller.EliminaContatto(contatto.Id);
 
 
       }
@@ -180,11 +203,11 @@ class Program
          StampaListaPartecipanti();
 
          int id = int.Parse(LeggiInput("Inserisci l'id del partecipante da modificare:"));
-         controller.VisualizzaContatto(id);
+         Contatto contatto = controller.VisualizzaContatto(id);
          string inputInteressi = LeggiInput("Inserisci gli interessi separati da virgola:");
          List<string> interessi = inputInteressi.Split(",").ToList();
 
-         controller.ModificaInteresse(id, interessi);
+         controller.ModificaInteresse(contatto.Id, interessi);
 
       }
 
