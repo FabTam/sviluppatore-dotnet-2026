@@ -4,9 +4,7 @@
     "Nome": "Fabio",
     "Eta": "35",
     "Presente": false,
-    "Interessi": [
-      "calcio"
-    ]
+    "Interessi": []
   },
   {
     "Id": 3,
@@ -30,11 +28,11 @@
   },
   {
     "Id": 7,
-    "Nome": "Fanuel",
-    "Eta": "0",
+    "Nome": "Anna",
+    "Eta": "45",
     "Presente": false,
     "Interessi": [
-      "droghe"
+      "cavoli"
     ]
   }
 ]

@@ -1,14 +1,25 @@
+using System.Diagnostics.Contracts;
+using System.ComponentModel.DataAnnotations;
+
+
 public class ContattiController
 {
    // queste sono le variabili di istanza della classe ContattiController, cioè le variabili che appartengono a ogni istanza
-   private readonly string path = "listapartecipanti.json";
+   private readonly string origin;
+   private readonly string path;
+
    private List<Contatto> contatti;
    private lastIdController lastIdController;
 
    public ContattiController()
    {
+      origin           = "Data";
+      path             = Path.Combine(origin, "listapartecipanti.json");
       lastIdController = new lastIdController();
-      contatti = JsonHelper.Leggi<List<Contatto>>(path) ?? new List<Contatto>();
+      contatti         = JsonHelper.Leggi<List<Contatto>>(path) ?? new List<Contatto>();
+      Console.WriteLine(path);
+      Console.WriteLine(File.Exists(path));
+    
    }
 
    public List<Contatto> GetContatti()
@@ -28,6 +39,17 @@ public class ContattiController
          Interessi = interessi
       };
 
+      var context = new ValidationContext(nuovoContatto);
+
+      try
+      {
+         Validator.ValidateObject(nuovoContatto, context, true);
+      }
+      catch (ValidationException ex)
+      {
+         Console.WriteLine($"Errore: {ex.Message}");
+         return;
+      }
       contatti.Add(nuovoContatto);
       Salva();
    }
@@ -54,8 +76,58 @@ public class ContattiController
          contattoEsistente.Eta = eta;
          contattoEsistente.Presente = presente;
          contattoEsistente.Interessi = interessi;
+
+         var context = new ValidationContext(contattoEsistente);
+         try
+         {
+            Validator.ValidateObject(contattoEsistente, context, true);
+         }
+         catch (ValidationException ex)
+         {
+            Console.WriteLine($"Errore: {ex.Message}");
+            return;
+         }
          Salva();
       }
+   }
+
+   public void ModificaInteresse(int id, List<string> interessi)
+   {
+      Contatto contattoEsistente = null;
+      foreach (var c in contatti)
+      {
+         if (c.Id == id)
+         {
+            contattoEsistente = c;
+            break;
+         }
+      }
+
+      if (contattoEsistente != null)
+      {
+         contattoEsistente.Interessi = interessi;
+      }
+      Salva();
+   }
+
+   public void EliminaInteresse(int id, int scelta)
+   {
+      Contatto contattoEsistente = null;
+      foreach (var c in contatti)
+      {
+         if (c.Id == id)
+         {
+            contattoEsistente = c;
+            break;
+         }
+      }
+
+      if (contattoEsistente != null)
+      {
+         contattoEsistente.Interessi.RemoveAt(scelta);
+      }
+      Salva();
+
    }
 
    public void EliminaContatto(int id)
@@ -96,4 +168,6 @@ public class ContattiController
       }
       return contattoEsistente;
    }
+
+
 }
