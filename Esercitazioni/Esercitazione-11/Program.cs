@@ -83,7 +83,8 @@ while (continua)
             }
             else
             {
-                Console.WriteLine($"Numero eliminato = {numerodaEliminare}");
+                Console.WriteLine($"Numero da eliminare = {numerodaEliminare}");
+                rubrica.Remove(numerodaEliminare);
             }
             Console.Clear();
             

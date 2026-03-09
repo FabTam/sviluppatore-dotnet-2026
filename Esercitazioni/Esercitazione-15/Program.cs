@@ -12,7 +12,6 @@ class Program
    static void Main(string[] args)
    {
       ContattiController controller = new ContattiController();
-
       Menu();
 
 
@@ -95,7 +94,7 @@ class Program
       {
 
          string nome = LeggiInput("Nome:");
-         string eta = LeggiInput("Età:");
+         string eta  = LeggiInput("Età:");
          bool presente;
          while (true)
          {
@@ -174,15 +173,17 @@ class Program
                Console.WriteLine("Inserisci solo si o no.");
          }
          string inputInteressi = LeggiInput("Inserisci gli interessi separati da virgola:");
-         List<string> interessi = inputInteressi.Split(",").ToList();
+         List<string> interessi;
          if (!string.IsNullOrWhiteSpace(inputInteressi))
          {
+            interessi = inputInteressi.Split(",").ToList();
+
             contatto.Interessi = interessi;
          }
 
 
 
-         controller.ModificaContatto(contatto.Id, nome, eta, presente, interessi);
+         controller.ModificaContatto(contatto.Id, nome, eta, presente, contatto.Interessi);
 
       }
 
@@ -205,9 +206,14 @@ class Program
          int id = int.Parse(LeggiInput("Inserisci l'id del partecipante da modificare:"));
          Contatto contatto = controller.VisualizzaContatto(id);
          string inputInteressi = LeggiInput("Inserisci gli interessi separati da virgola:");
-         List<string> interessi = inputInteressi.Split(",").ToList();
+         if (!string.IsNullOrWhiteSpace(inputInteressi))
+         {
+            List<string> interessi = inputInteressi.Split(",").ToList();
 
-         controller.ModificaInteresse(contatto.Id, interessi);
+            contatto.Interessi = interessi;
+         }
+
+         controller.ModificaInteresse(contatto.Id, contatto.Interessi);
 
       }
 
