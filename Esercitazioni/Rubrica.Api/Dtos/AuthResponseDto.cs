@@ -1,6 +1,6 @@
 
 
-namespace  Esercitazione_19_Rubrica.Dtos;
+namespace  Rubrica.Api.Dtos;
 
 public class AuthResponseDto
 {

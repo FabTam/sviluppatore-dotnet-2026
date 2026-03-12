@@ -2,9 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Esercitazione_19_Rubrica.Models;
+using Rubrica.Api.Models;
 
-namespace Esercitazione_19_Rubrica;
+
+
+namespace Rubrica.Api.Helpers;
 
 public class JwtHelper
 {
@@ -22,9 +24,9 @@ public class JwtHelper
     string? issuer = _configuration["Jwt:Issuer"];
     string? audience = _configuration["Jwt:audience"];
 
-    if(string.IsNullOrEmpty(key) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
+    if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
     {
-        throw new Exception("Configurazione JWT mancante.");
+      throw new Exception("Configurazione JWT mancante.");
     }
 
 
@@ -36,15 +38,15 @@ public class JwtHelper
         new Claim(ClaimTypes.Email, user.Email ?? "")
 
     };
-    
+
     SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-    SigningCredentials credentials   = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+    SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
     JwtSecurityToken token = new JwtSecurityToken(
-        issuer   : issuer,
-        audience : audience,
-        claims   : claims,
-        expires : DateTime.UtcNow.AddHours(1),
+        issuer: issuer,
+        audience: audience,
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(1),
         signingCredentials: credentials
     );
 

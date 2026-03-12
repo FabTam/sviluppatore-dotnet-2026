@@ -339,7 +339,7 @@ La web api rubrica userà JWT per autenticare i client Angular e avrà:
 Creazione archetipo webapi 
 
 ```bash
-dotnet web api- o Rubrica.Api
+dotnet new webapi -o Rubrica.Api
 ```
 Installazione librerie
 ```bash
