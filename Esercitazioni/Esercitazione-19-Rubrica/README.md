@@ -256,14 +256,49 @@ Flusso generico delle informazioni:
 - response in JSON ad Angular.
 
 
-# WEBAPI RUBRICA COMPLETA
+# WEBAPI RUBRICA COMPLETA V1
+
+- ApplicationUser che estende Identity User
+- Tabella Interest collegata all'utente
+- Authservice
+- Interest service
+- Controller semplici con operazioni crud
+
+
+Rubrica.Api
+|-- Controllers
+     |--- AuthController.cs
+     |--- InterestsController.cs
+|-- Data
+     |--- ApplicationDbContext.cs
+|
+|--- Dtos
+|     |-- AuthResponseDto.cs
+|     |-- InterestCreateDto.cs
+|     |-- InterestDto.cs
+|     |-- LoginDto.cs
+|     |-- RegisterDto.cs
+|
+|
+|--- Helpers
+|     |--- ApplicationUser.cs
+|     |---- Interest.cs
+|
+|
+|--- Services
+|    |--- AuthService.cs
+|    |-- InterestService.cs
+|
+|--- Program.cs
+|--- appsettings.json
+
 
 La web api rubrica userà JWT per autenticare i client Angular e avrà:
 
 # Modelli:
 - un modello Contatto con proprietà come Id, Nome Completo, Telefono, stato attivo, una lista di competenze, una data di creazione.
 - un modello User con Id, Username, PasswordHash, e Ruolo per gestire l'autenticazione e autorizzazione e il collegamento con i contatti.
-- Data Annotations e Decorators per validazione e sicurezza.t
+- Data Annotations e Decorators per validazione e sicurezza.
 ---
 # DTO
 - un DTO ContattoDto con solo alcune proprietà per esporre i dati in modo sicuro.
@@ -378,6 +413,7 @@ public class Contatto
 
 public class User
 {
+
  [Required]
   [StringLength(50)]
   public string Username {get;set;} = string.Empty;

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace  Esercitazione_19_Rubrica.Dtos;
 
-public class LoginDto
+public class RegisterDto
 {
     [Required]
     [EmailAddress]
@@ -12,4 +12,9 @@ public class LoginDto
     [StringLength(100, MinimumLength = 6)]
     public string Password {get;set;} = string.Empty;
 
+    [Required]
+    [StringLength(100)]
+    public string NomeCompleto {get; set;} = string.Empty;
+
+    public string? PhoneNumber {get; set;}
 }

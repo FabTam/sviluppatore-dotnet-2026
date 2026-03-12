@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+namespace Esercitazione_19_Rubrica.Models;
 
 public class ApplicationDbContext : DbContext
 {
@@ -9,7 +11,7 @@ public class ApplicationDbContext : DbContext
     }
 
     // DbSet per la tabella Contatti
-    public DbSet<Contatto> Contatti {get;set;}
-    public DbSet<User> Users {get;set;}
+    public DbSet<Interest> Interests {get;set;}
+   
 
 }
