@@ -2,11 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Rubrica.Api.Models;
+using RubricaSemplice.Api.Models;
 
 
 
-namespace Rubrica.Api.Helpers;
+namespace RubricaSemplice.Api.Helpers;
 
 public class JwtHelper
 {

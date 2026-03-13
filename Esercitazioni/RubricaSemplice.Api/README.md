@@ -992,18 +992,17 @@ public static class DataSeeder
 
 # Pacchetti da installare
 ```bash
-dotnet tool install --global dotnet-ef
+dotnet tool install --global dotnet-ef ( basta installare una volta per sistema)
 
 // Entity Framework Core e SQLite
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite
-
-// Identity con EF Core
 dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
-
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 
 // strumenti per migrazione
 dotnet add package Microsoft.EntityFrameworkCore.Design
 
+
 // JWT e autenticazione
 dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
 dotnet add package System.IdentityModel.Tokens.Jwt
+

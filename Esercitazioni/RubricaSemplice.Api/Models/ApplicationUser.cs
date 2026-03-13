@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Rubrica.Api.Models;
+namespace RubricaSemplice.Api.Models;
 
 [Table("Users")] // decorator che permette di definire a quale tabella appartiene la tabella.
 public class ApplicationUser : IdentityUser

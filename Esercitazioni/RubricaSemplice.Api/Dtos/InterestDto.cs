@@ -1,6 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 
-namespace Rubrica.Api.Dtos;
+namespace RubricaSemplice.Api.Dtos;
 
 public class InterestDto
 {

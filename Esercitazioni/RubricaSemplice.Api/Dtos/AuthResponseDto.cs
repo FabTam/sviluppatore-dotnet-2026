@@ -1,6 +1,6 @@
 
 
-namespace  Rubrica.Api.Dtos;
+namespace  RubricaSemplice.Api.Dtos;
 
 public class AuthResponseDto
 {

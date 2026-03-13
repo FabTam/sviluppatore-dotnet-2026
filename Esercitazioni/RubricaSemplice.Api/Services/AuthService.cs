@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
-using Rubrica.Api.Dtos;
-using Rubrica.Api.Helpers;
-using Rubrica.Api.Models;
+using RubricaSemplice.Api.Dtos;
+using RubricaSemplice.Api.Helpers;
+using RubricaSemplice.Api.Models;
 
-namespace Rubrica.Api.Services;
+namespace RubricaSemplice.Api.Services;
 
 public class AuthService
 {
@@ -11,20 +11,19 @@ public class AuthService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly JwtHelper _jwtHelper;
 
-    public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, JwtHelper jwtHelper)
+    public AuthService(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        JwtHelper jwtHelper)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtHelper = jwtHelper;
     }
 
-    /*questo è un metodo asincrono che restituisce un IdentityResult, che indica se la registrazione è riuscita o no, e contiene eventuali errori eun metodo asicrono che è un metodo che può essere
-     eseguito in modo non bloccante cioè puo fare operazioni che richiedono tempo senza bloccare il thread principale dell'applicazione
-    */
-
     public async Task<IdentityResult> RegisterAsync(RegisterDto dto)
     {
-        // controlliamo se esiste già un utente con questa email (await fa restare in attesa il thread finchè l'operazione non è completa)
+        // Cerchiamo se la mail esiste già
         ApplicationUser? existingUser = await _userManager.FindByEmailAsync(dto.Email);
 
         if (existingUser != null)
@@ -32,19 +31,18 @@ public class AuthService
             IdentityError error = new IdentityError();
             error.Description = "Email già registrata.";
 
-            List<IdentityError> errors = new List<IdentityError>();
-            errors.Add(error);
+            return IdentityResult.Failed(error);
         }
 
-        // creiamo il nuovo utente
+        // Creiamo l'utente nuovo
         ApplicationUser user = new ApplicationUser();
-        user.UserName = dto.Email; // usiamo la mail anche come username
+        user.UserName = dto.Email;
         user.Email = dto.Email;
         user.NomeCompleto = dto.NomeCompleto;
         user.PhoneNumber = dto.PhoneNumber;
         user.CreatedAt = DateTime.UtcNow;
 
-        // Identity salva l'utente e crea l'has sicuro della password
+        // Identity salva l'utente e crea l'hash sicuro della password
         IdentityResult result = await _userManager.CreateAsync(user, dto.Password);
 
         return result;
@@ -52,7 +50,7 @@ public class AuthService
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
     {
-        // cerchiamo l'utente per email
+        // Cerchiamo l'utente con la mail
         ApplicationUser? user = await _userManager.FindByEmailAsync(dto.Email);
 
         if (user == null)
@@ -60,7 +58,7 @@ public class AuthService
             return null;
         }
 
-        // controlliamo se la paswword è giusta
+        // Controlliamo se la password è corretta
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
 
         if (!result.Succeeded)
@@ -68,14 +66,14 @@ public class AuthService
             return null;
         }
 
-        // se tutto va bene creiamo il token
         string token = _jwtHelper.GenerateToken(user);
 
         AuthResponseDto response = new AuthResponseDto();
         response.Token = token;
         response.UserId = user.Id;
-        response.Email = user.Email ?? "";
+        response.Email = user.Email ?? string.Empty;
         response.NomeCompleto = user.NomeCompleto;
+
         return response;
     }
 }

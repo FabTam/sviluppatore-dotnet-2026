@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Rubrica.Api.Data;
-using Rubrica.Api.Models;
+using RubricaSemplice.Api.Data;
+using RubricaSemplice.Api.Models;
 
-namespace Rubrica.Api.Seed;
+namespace RubricaSemplice.Api.Seed;
 
 public static class DataSeeder
 {
@@ -12,7 +12,7 @@ public static class DataSeeder
   {
     using IServiceScope scope = serviceProvider.CreateScope();
 
-    ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    ApplicationDbContext context             = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
     // creiamo il database se non esiste ancora
@@ -74,11 +74,11 @@ public static class DataSeeder
     }
 
     ApplicationUser user = new ApplicationUser();
-    user.UserName = email;
-    user.Email = email;
+    user.UserName     = email;
+    user.Email        = email;
     user.NomeCompleto = nomeCompleto;
-    user.PhoneNumber = phoneNumber;
-    user.CreatedAt = DateTime.UtcNow;
+    user.PhoneNumber  = phoneNumber;
+    user.CreatedAt    = DateTime.UtcNow;
 
 
 

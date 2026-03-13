@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Rubrica.Api.Models
+namespace RubricaSemplice.Api.Models
 {
     [Table("Interests")]
     public class Interest

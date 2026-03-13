@@ -185,7 +185,7 @@ Le migrations vengono generate automaticamente da Entity Framework:
 
 ```bash
 dotnet ef migrations add InitialCreate
-donet ef database updata
+dotnet ef database updata
 ```
 gestiscono modifiche allo schema del database.
 

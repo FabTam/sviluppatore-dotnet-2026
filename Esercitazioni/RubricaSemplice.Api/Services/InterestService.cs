@@ -1,8 +1,8 @@
-using Rubrica.Api.Data;
-using Rubrica.Api.Dtos;
-using Rubrica.Api.Models;
+using RubricaSemplice.Api.Data;
+using RubricaSemplice.Api.Dtos;
+using RubricaSemplice.Api.Models;
 
-namespace Rubrica.Api.Services;
+namespace RubricaSemplice.Api.Services;
 
 public class InterestService
 {
@@ -16,10 +16,11 @@ public class InterestService
     public async Task<List<InterestDto>> GetAllByUserIdAsync(string userId)
     {
         List<InterestDto> result = new List<InterestDto>();
-        //prendiamo tutti gli interessi dal database
+
+        // Leggiamo tutti gli interessi e poi filtriamo con un ciclo.
+        // È meno efficiente del LINQ, ma è più facile da capire all'inizio.
         List<Interest> allInterests = _context.Interests.ToList();
 
-        //filtriamo a mano solo quelli dell'utente loggato
         for (int i = 0; i < allInterests.Count; i++)
         {
             Interest currentInterest = allInterests[i];
@@ -33,6 +34,7 @@ public class InterestService
                 result.Add(dto);
             }
         }
+
         return await Task.FromResult(result);
     }
 
@@ -45,7 +47,6 @@ public class InterestService
             return null;
         }
 
-        // controlliamo che l'interesse appartenga all'utente giusto
         if (interest.UserId != userId)
         {
             return null;
@@ -56,28 +57,31 @@ public class InterestService
         dto.Nome = interest.Nome;
 
         return dto;
-
     }
 
-    public async Task<InterestDto?> CreateAsync(InterestCreateDto dto, string UserId)
+    public async Task<InterestDto?> CreateAsync(InterestCreateDto dto, string userId)
     {
-        // Controllo semplice per evitare doppioni
-
+        // Evitiamo interessi duplicati per lo stesso utente
         List<Interest> allInterests = _context.Interests.ToList();
 
         for (int i = 0; i < allInterests.Count; i++)
         {
-
             Interest currentInterest = allInterests[i];
-            if (currentInterest.UserId == UserId && currentInterest.Nome == dto.Nome)
+
+            if (currentInterest.UserId == userId)
             {
-                return null;
+                bool sameName = string.Equals(currentInterest.Nome, dto.Nome, StringComparison.OrdinalIgnoreCase);
+
+                if (sameName)
+                {
+                    return null;
+                }
             }
         }
 
         Interest interest = new Interest();
         interest.Nome = dto.Nome;
-        interest.UserId = UserId;
+        interest.UserId = userId;
 
         _context.Interests.Add(interest);
         await _context.SaveChangesAsync();
@@ -89,7 +93,7 @@ public class InterestService
         return result;
     }
 
-    public async Task<InterestDto?> UpdateAsync(int id, InterestCreateDto dto, string userid)
+    public async Task<InterestDto?> UpdateAsync(int id, InterestCreateDto dto, string userId)
     {
         Interest? interest = await _context.Interests.FindAsync(id);
 
@@ -98,13 +102,30 @@ public class InterestService
             return null;
         }
 
-        if (interest.UserId != null)
+        if (interest.UserId != userId)
         {
             return null;
         }
 
-        interest.Nome = dto.Nome;
+        // Controlliamo che il nuovo nome non esista già in un altro interesse dello stesso utente
+        List<Interest> allInterests = _context.Interests.ToList();
 
+        for (int i = 0; i < allInterests.Count; i++)
+        {
+            Interest currentInterest = allInterests[i];
+
+            if (currentInterest.UserId == userId && currentInterest.Id != id)
+            {
+                bool sameName = string.Equals(currentInterest.Nome, dto.Nome, StringComparison.OrdinalIgnoreCase);
+
+                if (sameName)
+                {
+                    return null;
+                }
+            }
+        }
+
+        interest.Nome = dto.Nome;
         await _context.SaveChangesAsync();
 
         InterestDto result = new InterestDto();
@@ -129,10 +150,8 @@ public class InterestService
         }
 
         _context.Interests.Remove(interest);
-
         await _context.SaveChangesAsync();
 
         return true;
     }
-
 }

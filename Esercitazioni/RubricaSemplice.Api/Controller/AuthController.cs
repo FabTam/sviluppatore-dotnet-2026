@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Rubrica.Api.Dtos;
-using Rubrica.Api.Services;
+using RubricaSemplice.Api.Dtos;
+using RubricaSemplice.Api.Services;
 
-namespace Rubrica.Api.Controllers;
+namespace RubricaSemplice.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
