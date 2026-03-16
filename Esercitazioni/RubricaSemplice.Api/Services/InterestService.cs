@@ -4,13 +4,13 @@ using RubricaSemplice.Api.Models;
 
 namespace RubricaSemplice.Api.Services;
 
-public class InterestService
+public class InterestService // gestisce la logica delle operazioni effettuabili sugli interessi
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context; // context è il database di EntityFramework
 
     public InterestService(ApplicationDbContext context)
     {
-        _context = context;
+        _context = context; // dependency injection per poter aver il database pubblico
     }
 
     public async Task<List<InterestDto>> GetAllByUserIdAsync(string userId)

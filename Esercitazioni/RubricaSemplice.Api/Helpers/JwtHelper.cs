@@ -10,7 +10,7 @@ namespace RubricaSemplice.Api.Helpers;
 
 public class JwtHelper
 {
-  private readonly IConfiguration _configuration;
+  private readonly IConfiguration _configuration; // leggere e gestire i valori di configurazione dell'applicazione.
   public JwtHelper(IConfiguration configuration)
   {
     _configuration = configuration;
@@ -39,8 +39,8 @@ public class JwtHelper
 
     };
 
-    SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-    SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+    SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)); // creazione chiave segreta per la firma del token.
+    SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // utilizzo della chiave segreta per la firma del token.
 
     JwtSecurityToken token = new JwtSecurityToken(
         issuer: issuer,

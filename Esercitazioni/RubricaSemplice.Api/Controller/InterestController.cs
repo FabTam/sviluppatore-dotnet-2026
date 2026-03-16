@@ -17,13 +17,13 @@ public class InterestsController : ControllerBase
     public InterestsController(InterestService interestService)
     {
 
-        _interestService = interestService;
+        _interestService = interestService; // rende pubblica la variabile alla creazione di un nuovo oggetto di tipo InterestsController
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        string userId = GetUserIdFromToken();
+        string userId = GetUserIdFromToken(); // serve per capire chi è autenticato
 
         List<InterestDto> interests = await _interestService.GetAllByUserIdAsync(userId);
 
@@ -46,9 +46,9 @@ public class InterestsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] InterestCreateDto dto)
+    public async Task<IActionResult> Create([FromBody] InterestCreateDto dto) // IActionResult è una classe di Identity. Frombody significa che riceve il json e lo converte in ciò che il dto farà vedere
     {
-        string userId = GetUserIdFromToken();
+        string userId = GetUserIdFromToken(); 
 
         InterestDto? result = await _interestService.CreateAsync(dto, userId);
 

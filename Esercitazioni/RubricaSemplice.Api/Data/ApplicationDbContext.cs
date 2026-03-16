@@ -4,10 +4,12 @@ using RubricaSemplice.Api.Models;
 
 namespace RubricaSemplice.Api.Data;
 
+// definizione del contesto del database, i due punti indicano l'ereditarietà ovvero ApplicationDbContext che eredità tutto ciò che fa IdentityUserContext
 public class ApplicationDbContext : IdentityUserContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
+        //passa la configurazione del db al contesto
     }
 
     public DbSet<Interest> Interests { get; set; }

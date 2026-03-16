@@ -12,7 +12,7 @@ public class AuthService
     private readonly JwtHelper _jwtHelper;
 
     public AuthService(
-        UserManager<ApplicationUser> userManager,
+        UserManager<ApplicationUser> userManager, // costruttore con classi di Identity per la gestione dell'user
         SignInManager<ApplicationUser> signInManager,
         JwtHelper jwtHelper)
     {
@@ -21,7 +21,7 @@ public class AuthService
         _jwtHelper = jwtHelper;
     }
 
-    public async Task<IdentityResult> RegisterAsync(RegisterDto dto)
+    public async Task<IdentityResult> RegisterAsync(RegisterDto dto) // Task è una classe di sistema per le operazioni asincrone che accetta un tipo, in questo caso la classe IdentityResult.
     {
         // Cerchiamo se la mail esiste già
         ApplicationUser? existingUser = await _userManager.FindByEmailAsync(dto.Email);

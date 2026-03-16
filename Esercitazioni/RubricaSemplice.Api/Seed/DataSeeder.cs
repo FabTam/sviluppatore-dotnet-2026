@@ -10,7 +10,7 @@ public static class DataSeeder
   // questo metodo crea utenti e interessi iniziali. Se i dati esistono già, non li duplica.
   public static async Task SeedAsync(IServiceProvider serviceProvider)
   {
-    using IServiceScope scope = serviceProvider.CreateScope();
+    using IServiceScope scope = serviceProvider.CreateScope(); // creazione scope per i servizi necessari. Serve per aprire e chiudere la connessione al database.
 
     ApplicationDbContext context             = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
