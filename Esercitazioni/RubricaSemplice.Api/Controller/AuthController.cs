@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using RubricaSemplice.Api.Dtos;
 using RubricaSemplice.Api.Services;
+using System.Security.Claims;
+
 
 namespace RubricaSemplice.Api.Controllers;
 
@@ -9,10 +11,10 @@ namespace RubricaSemplice.Api.Controllers;
 
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService; 
+    private readonly AuthService _authService;
 
     public AuthController(AuthService authService)
-    {    
+    {
         // dependency injection: le dipendenze(i services) vengono fornite in modo automatico.
         _authService = authService;
     }
@@ -47,5 +49,64 @@ public class AuthController : ControllerBase
         }
 
         return Ok(response); // ritorno se il login ha successo. 
+    }
+
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetUserById()
+    {
+        string userId = GetUserIdFromToken();
+
+        UserProfileDto? dto = await _authService.GetUserByIdAsync(userId);
+
+        if (dto == null)
+        {
+            return NotFound(new { message = "Utente non trovato" });
+        }
+        
+        return Ok(dto);
+    }
+
+    [HttpPut("update")]
+
+    public async Task<IActionResult> Update([FromBody] UpdateUserDto dto)
+    {
+        string userId = GetUserIdFromToken();
+
+        var result = await _authService.UpdateAsync(dto, userId);
+        if (result == null)
+        {
+            return NotFound(new { message = "Utente non trovato" });
+        }
+
+        return Ok(result);
+    }
+
+    [HttpDelete("delete")]
+
+    public async Task<IActionResult> Delete()
+    {
+        string userId = GetUserIdFromToken();
+
+        var result = await _authService.DeleteAsync(userId);
+
+        if (result == null)
+        {
+            return NotFound(new { message = "Utente non trovato." });
+        }
+
+        return Ok(result);
+    }
+
+    private string GetUserIdFromToken()
+    {
+
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new Exception("UserId non trovato nel token");
+        }
+
+        return userId;
     }
 }

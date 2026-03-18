@@ -19,7 +19,7 @@ public static class DataSeeder
 
     await context.Database.EnsureCreatedAsync();
 
-    // creiamo alcuni utenti demo
+    // creiamo alcuni utenti demo attraverso userManager che controlla in automatico che non ci siano doppioni negli inserimenti
     ApplicationUser utente1 = await CreateUserIfNotExistsAsync(
         userManager,
         "utente1@gmail.com",

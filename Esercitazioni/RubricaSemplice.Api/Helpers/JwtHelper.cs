@@ -8,6 +8,7 @@ using RubricaSemplice.Api.Models;
 
 namespace RubricaSemplice.Api.Helpers;
 
+// si occupa di generare i token jwt per gli utenti autenticati.
 public class JwtHelper
 {
   private readonly IConfiguration _configuration; // leggere e gestire i valori di configurazione dell'applicazione.
@@ -16,9 +17,9 @@ public class JwtHelper
     _configuration = configuration;
   }
 
-  public string GenerateToken(ApplicationUser user)
+  public string GenerateToken(ApplicationUser user) // il token che dobbiamo creare deve contenere le informazioni dell'utente.
   {
-    // leggiamo i dati dal file appsettings.sjson
+    // leggiamo i dati dal file appsettings.json
 
     string? key = _configuration["Jwt:Key"];
     string? issuer = _configuration["Jwt:Issuer"];
