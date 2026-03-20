@@ -12,7 +12,6 @@ public class AuthService
     private readonly UserManager<ApplicationUser> _userManager; // si occupa di creazione e gestione degli utenti.
     private readonly SignInManager<ApplicationUser> _signInManager; // si occupa della registrazione degli utenti
 
-    private readonly ApplicationDbContext _context; // context è il database di EntityFramework
     private readonly JwtHelper _jwtHelper; // rimando all'helper per la generazione di un token JWT.
 
     public AuthService(
@@ -23,7 +22,6 @@ public class AuthService
         _userManager = userManager;  // Dependency injection
         _signInManager = signInManager;
         _jwtHelper = jwtHelper;
-        _context = context;
 
     }
 
@@ -43,11 +41,12 @@ public class AuthService
 
         // Creiamo l'utente nuovo se la mail non è presente istanziando un oggetto del modello ApplicationUser e assegnando alle sue proprietà ciò che vogliamo mostrare attraverso i DTO.
         ApplicationUser user = new ApplicationUser();
-        user.UserName = dto.Email;
-        user.Email = dto.Email;
-        user.NomeCompleto = dto.NomeCompleto;
-        user.PhoneNumber = dto.PhoneNumber;
-        user.CreatedAt = DateTime.UtcNow;
+        user.UserName        = dto.Email;
+        user.Email           = dto.Email;
+        user.NomeCompleto    = dto.NomeCompleto;
+        user.PhoneNumber     = dto.PhoneNumber;
+        user.CreatedAt       = DateTime.UtcNow;
+        user.Abilitato       = dto.Abilitato;
 
         // Identity salva l'utente e crea l'hash sicuro della password
         IdentityResult result = await _userManager.CreateAsync(user, dto.Password);
@@ -76,37 +75,38 @@ public class AuthService
         // Nel caso in cui la password sia corretta chiamiamo il metodo per la generazione del token e costruiamo il Dto per la risposta
         string token = _jwtHelper.GenerateToken(user);
 
-        AuthResponseDto response = new AuthResponseDto();
-        response.Token = token;
-        response.UserId = user.Id;
-        response.Email = user.Email ?? string.Empty;
-        response.NomeCompleto = user.NomeCompleto;
+        AuthResponseDto response    = new AuthResponseDto();
+        response.Token              = token;
+        response.UserId             = user.Id;
+        response.Email              = user.Email ?? string.Empty;
+        response.NomeCompleto       = user.NomeCompleto;
+        response.Abilitato          = user.Abilitato;
+        
 
         return response;
     }
-     public async Task<UserProfileDto?> GetUserByIdAsync(string userId) // metodo asincrono per ottenere un interesse per UserId inserito e Id dell'interesse
+     public async Task<UserProfileDto?> GetUserByIdAsync(string userId) // metodo asincrono per ottenere un utente.
     {
-        Console.WriteLine("Sono nella funzione GetUserByIdAsync");
         ApplicationUser? user = await _userManager.FindByIdAsync(userId);
-
 
         if (user == null)
         {
             return null;
         }
 
-        UserProfileDto dto = new UserProfileDto();
-        dto.UserId       = user.Id;
-        dto.NomeCompleto = user.NomeCompleto;
-        dto.Email        = user.Email ?? string.Empty;
-        dto.PhoneNumber  = user.PhoneNumber;
+        UserProfileDto dto  = new UserProfileDto();
+        dto.UserId          = user.Id;
+        dto.NomeCompleto    = user.NomeCompleto;
+        dto.Email           = user.Email ?? string.Empty;
+        dto.PhoneNumber     = user.PhoneNumber;
+        dto.Abilitato       = user.Abilitato;
 
         return dto;
     }
 
     public async Task<IdentityResult> UpdateAsync(UpdateUserDto dto, string userId) // metodo per la modifica di un utente
     {
-        // Cerchiamo l'utente con la mail
+        
         ApplicationUser? user = await _userManager.FindByIdAsync(userId);
         
         if (user == null)
@@ -116,8 +116,9 @@ public class AuthService
         }
 
 
-        user.NomeCompleto     = dto.NomeCompleto;
-        user.PhoneNumber      = dto.PhoneNumber;
+        user.NomeCompleto        = dto.NomeCompleto;
+        user.PhoneNumber         = dto.PhoneNumber;
+        user.Abilitato           = dto.Abilitato;
         IdentityResult result = await _userManager.UpdateAsync(user); // salva le modifiche apportate al database.
 
 

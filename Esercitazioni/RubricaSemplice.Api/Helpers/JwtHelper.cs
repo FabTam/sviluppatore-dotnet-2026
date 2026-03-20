@@ -37,11 +37,10 @@ public class JwtHelper
         new Claim(ClaimTypes.NameIdentifier, user.Id),
         new Claim(ClaimTypes.Name, user.UserName ?? ""),
         new Claim(ClaimTypes.Email, user.Email ?? "")
-
     };
 
     SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)); // creazione chiave segreta per la firma del token.
-    SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // utilizzo della chiave segreta per la firma del token.
+    SigningCredentials credentials   = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // utilizzo della chiave segreta per la firma del token.
 
     JwtSecurityToken token = new JwtSecurityToken(
         issuer: issuer,

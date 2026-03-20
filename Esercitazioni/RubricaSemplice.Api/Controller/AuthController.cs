@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace RubricaSemplice.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")] // definisce il percorso dell'api.
+[Route("api/[controller]")] // definisce il percorso dell'api. [controller] viene eliminato lasciando /api/Auth/ [e qui le operazioni che eseguirà].
 
 public class AuthController : ControllerBase
 {
@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
                 errors.Add(error.Description);
             }
 
-            return BadRequest(errors); // metodo ereditato da ControllerBase per la gestione di una specifica tipologia di errore. Ritorno se la richiesta non ha successo.
+            return BadRequest(errors); // metodo ereditato da ControllerBase per la gestione di una specifica tipologia di errore.
         }
 
         return Ok(new { message = "Registrazione completata" }); // Ritorno se la richiesta ha successo.
@@ -51,12 +51,12 @@ public class AuthController : ControllerBase
         return Ok(response); // ritorno se il login ha successo. 
     }
 
-    [HttpGet("profile")]
+    [HttpGet("profile")] // la rotta profile permette la visualizzazione del profilo, in console
     public async Task<IActionResult> GetUserById()
     {
-        string userId = GetUserIdFromToken();
+        string userId = GetUserIdFromToken(); // otteniamo l'id dell'utente
 
-        UserProfileDto? dto = await _authService.GetUserByIdAsync(userId);
+        UserProfileDto? dto = await _authService.GetUserByIdAsync(userId); // chiamata al service che ci torna il DTO del profilo
 
         if (dto == null)
         {
@@ -73,7 +73,7 @@ public class AuthController : ControllerBase
         string userId = GetUserIdFromToken();
 
         var result = await _authService.UpdateAsync(dto, userId);
-        if (result == null)
+        if (!result.Succeeded)
         {
             return NotFound(new { message = "Utente non trovato" });
         }
@@ -89,7 +89,7 @@ public class AuthController : ControllerBase
 
         var result = await _authService.DeleteAsync(userId);
 
-        if (result == null)
+        if (!result.Succeeded)
         {
             return NotFound(new { message = "Utente non trovato." });
         }

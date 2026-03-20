@@ -990,6 +990,21 @@ public static class DataSeeder
 }
 ```
 
+# MIGRAZIONI
+
+Per come abbiamo impostato il program cs quello che avviene è questo:
+
+- Prima di avviare l'applicazione la prima volta dobbiamo eseguire la migrazione iniziale per creare il database.
+Questo processo genera una migrazione che descrive le modifiche al database e poi applica quelle modifiche al database stesso.
+
+```bash
+dotnet ef migrations add InitialCreate
+dotnet ef database updata
+```
+Il database viene creato senza dati perchè non è statom ancora invocato il seed, che viene eseguito nel program.cs quando avviamo l'applicazione con dotnet run.
+Da questo momento ogni modifica alle tabelle del database con aggiunta di campi deve essere segita da una nuova migrazione con i relativi comandi di configurazione e applicazione.
+
+
 # Pacchetti da installare
 ```bash
 dotnet tool install --global dotnet-ef ( basta installare una volta per sistema)
@@ -1000,7 +1015,9 @@ dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 
 // strumenti per migrazione
 dotnet add package Microsoft.EntityFrameworkCore.Design
-
+// una volta che aggiungi qualcosa al database
+dotnet ef migrations add NomeMigration
+dotnet ef database update
 
 // JWT e autenticazione
 dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
@@ -1058,14 +1075,14 @@ Crea Utente
 ```bash
 curl -X POST "http://localhost:5067/api/Auth/register" \
 -H "Content-Type: application/json" \
--d '{"email":"mario@email.com","password":"123456","nomeCompleto":"Mario Rossi","phoneNumber":"334343454"}'
+-d '{"email":"mario@email.com","password":"123456","nomeCompleto":"Mario Rossi","phoneNumber":"334343454", "abilitato":"true"}'
 ```
-Modifica utente(non implementato, ma si potrebbe fare aggiungendo un endpoint PUT in AuthController)
+Modifica utente.
 ```bash
 curl -X PUT "http://localhost:5067/api/Auth/update" \
 -H "Content-Type: application/json"  \
 -H "Authorization: Bearer $TOKEN" \
--d '{"nomeCompleto":"Mario Rossi Updated","phoneNumber":"3346548732"}'
+-d '{"nomeCompleto":"Mario Rossi Aggiornato","phoneNumber":"3346548732", "abilitato": false}'
 ```
 Elimina utente(non implementato, ma si potrebbe fare aggiungendo un endpoint DELETE in AuthController)
 

@@ -31,7 +31,7 @@ public class InterestsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetUserById(int id)
     {
         string userId = GetUserIdFromToken();
 
@@ -54,10 +54,10 @@ public class InterestsController : ControllerBase
 
         if (result == null)
         {
-            return BadRequest(new { message = "Interesse già presente oppure non valido" });
+            return BadRequest(new { message = "Interesse già presente oppure non valido" }); // BadRequest è uno dei metodi di ControllerBase che tornano degli status di errore.
         }
 
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetUserById), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}")]

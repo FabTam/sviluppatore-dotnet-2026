@@ -17,4 +17,7 @@ public class RegisterDto
     public string NomeCompleto {get; set;} = string.Empty;
 
     public string? PhoneNumber {get; set;}
+
+    public int Eta{get;set;}
+    public bool Abilitato{get;set;} = true;
 }

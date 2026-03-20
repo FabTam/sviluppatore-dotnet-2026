@@ -15,6 +15,8 @@ public class ApplicationUser : IdentityUser
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public bool Abilitato {get;set;} = true;
+
     // un utente può avere molti interessi
 
     public List<Interest> Interests { get; set; } = new List<Interest>();

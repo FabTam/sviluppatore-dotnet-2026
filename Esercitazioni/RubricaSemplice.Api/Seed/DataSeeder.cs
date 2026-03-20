@@ -12,12 +12,9 @@ public static class DataSeeder
   {
     using IServiceScope scope = serviceProvider.CreateScope(); // creazione scope per i servizi necessari. Serve per aprire e chiudere la connessione al database.
 
-    ApplicationDbContext context             = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    // creiamo il database se non esiste ancora
-
-    await context.Database.EnsureCreatedAsync();
 
     // creiamo alcuni utenti demo attraverso userManager che controlla in automatico che non ci siano doppioni negli inserimenti
     ApplicationUser utente1 = await CreateUserIfNotExistsAsync(
@@ -25,21 +22,25 @@ public static class DataSeeder
         "utente1@gmail.com",
         "123456",
         "Utente uno",
-        "3331234567");
+        "3331234567",
+      true);
+
 
     ApplicationUser utente2 = await CreateUserIfNotExistsAsync(
     userManager,
     "utente2@gmail.com",
     "123456",
     "utente due",
-    "3332354567");
+    "3332354567",
+    true);
 
     ApplicationUser utente3 = await CreateUserIfNotExistsAsync(
     userManager,
     "untente3@gmail.com",
     "123456",
     "utente tre",
-    "3331894567");
+    "3331894567",
+    true);
 
     // creiamo alcuni interessi per ogni utente
 
@@ -55,7 +56,6 @@ public static class DataSeeder
     await CreateInterestIfNotExistsAsync(context, utente3.Id, "Viaggi");
     await CreateInterestIfNotExistsAsync(context, utente3.Id, "Cucina");
 
-
   }
 
   private static async Task<ApplicationUser> CreateUserIfNotExistsAsync(
@@ -63,7 +63,8 @@ public static class DataSeeder
       string email,
       string password,
       string nomeCompleto,
-      string? phoneNumber)
+      string? phoneNumber,
+      bool abilitato)
   {
     // controlliamo se l'utente esiste già tramite email
     ApplicationUser? existingUser = await userManager.FindByEmailAsync(email);
@@ -74,11 +75,12 @@ public static class DataSeeder
     }
 
     ApplicationUser user = new ApplicationUser();
-    user.UserName     = email;
-    user.Email        = email;
+    user.UserName = email;
+    user.Email = email;
     user.NomeCompleto = nomeCompleto;
-    user.PhoneNumber  = phoneNumber;
-    user.CreatedAt    = DateTime.UtcNow;
+    user.PhoneNumber = phoneNumber;
+    user.CreatedAt = DateTime.UtcNow;
+    user.Abilitato = abilitato;
 
 
 
