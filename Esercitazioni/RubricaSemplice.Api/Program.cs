@@ -30,6 +30,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
 })
+.AddRoles<IdentityRole>() // fondamentale per i ruoli.
 .AddSignInManager<SignInManager<ApplicationUser>>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
@@ -79,6 +80,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<InterestService>();
+builder.Services.AddScoped<UserRoleService>(); // necessario per i ruoli.
 
 var app = builder.Build();
 

@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using RubricaSemplice.Api.Models;
 
@@ -17,7 +18,7 @@ public class JwtHelper
     _configuration = configuration;
   }
 
-  public string GenerateToken(ApplicationUser user) // il token che dobbiamo creare deve contenere le informazioni dell'utente.
+  public string GenerateToken(ApplicationUser user, IList<string> roles) // il token che dobbiamo creare deve contenere le informazioni dell'utente.
   {
     // leggiamo i dati dal file appsettings.json
 
@@ -32,12 +33,19 @@ public class JwtHelper
 
 
     // dentro il token mettiamo alcune informazioni utili
-    Claim[] claims = new Claim[]
+    List<Claim> claims = new List<Claim>();
+        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+        claims.Add(new Claim(ClaimTypes.Name, user.UserName ?? ""));
+        claims.Add(new Claim(ClaimTypes.Email, user.Email ?? ""));
+    
+    //Claim di Ruolo
+    for(int i = 0; i < roles.Count; i++)
     {
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(ClaimTypes.Name, user.UserName ?? ""),
-        new Claim(ClaimTypes.Email, user.Email ?? "")
-    };
+      claims.Add(new Claim(ClaimTypes.Role, roles[i] ));
+    }
+
+       
+    
 
     SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)); // creazione chiave segreta per la firma del token.
     SigningCredentials credentials   = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256); // utilizzo della chiave segreta per la firma del token.
@@ -53,3 +61,4 @@ public class JwtHelper
     return new JwtSecurityTokenHandler().WriteToken(token);
   }
 }
+

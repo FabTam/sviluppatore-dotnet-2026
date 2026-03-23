@@ -7,6 +7,9 @@ using RubricaSemplice.Api.Models;
 namespace RubricaSemplice.Api.Services;
 
 // Questa classe si occupa della logica di business per la registrazione e il login.
+
+
+// Questa classe si occupa della logica di business per la registrazione e il login.
 public class AuthService
 {
     private readonly UserManager<ApplicationUser> _userManager; // si occupa di creazione e gestione degli utenti.
@@ -36,7 +39,10 @@ public class AuthService
             IdentityError error = new IdentityError();
             error.Description = "Email già registrata.";
 
-            return IdentityResult.Failed(error);
+            List<IdentityError> errors = new List<IdentityError>();
+            errors.Add(error);
+
+            return IdentityResult.Failed(errors.ToArray());
         }
 
         // Creiamo l'utente nuovo se la mail non è presente istanziando un oggetto del modello ApplicationUser e assegnando alle sue proprietà ciò che vogliamo mostrare attraverso i DTO.
@@ -51,6 +57,18 @@ public class AuthService
         // Identity salva l'utente e crea l'hash sicuro della password
         IdentityResult result = await _userManager.CreateAsync(user, dto.Password);
 
+        if(!result.Succeeded)
+        {
+            return result;
+        }
+
+        IdentityResult addRoleResult = await _userManager.AddToRoleAsync(user, UserRoles.User);
+        
+        if(!addRoleResult.Succeeded)
+        {
+            return addRoleResult;
+        }
+        
         return result;
     }
 
@@ -71,9 +89,9 @@ public class AuthService
         {
             return null;
         }
-
+        IList<string> roles = await _userManager.GetRolesAsync(user);
         // Nel caso in cui la password sia corretta chiamiamo il metodo per la generazione del token e costruiamo il Dto per la risposta
-        string token = _jwtHelper.GenerateToken(user);
+        string token = _jwtHelper.GenerateToken(user, roles);
 
         AuthResponseDto response    = new AuthResponseDto();
         response.Token              = token;
@@ -81,7 +99,16 @@ public class AuthService
         response.Email              = user.Email ?? string.Empty;
         response.NomeCompleto       = user.NomeCompleto;
         response.Abilitato          = user.Abilitato;
-        
+
+        // nel progetto scegliamo un solo ruolo "user" quindi se c'è almeno un ruolo restituiamo il primo
+        if(roles.Count >0)
+        {
+            response.Role = roles[0];
+        }
+        else
+        {
+            response.Role = "";
+        }
 
         return response;
     }
@@ -141,3 +168,4 @@ public class AuthService
         return result;
     }
 }
+

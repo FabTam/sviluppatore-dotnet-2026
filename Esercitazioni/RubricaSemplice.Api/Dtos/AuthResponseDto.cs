@@ -11,4 +11,6 @@ public class AuthResponseDto
 
     public int Eta {get;set;}
     public bool Abilitato{get;set;} = true;
+    public string Role {get; set;} = string.Empty;
+
 }

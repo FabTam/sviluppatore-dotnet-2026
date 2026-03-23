@@ -14,10 +14,15 @@ public static class DataSeeder
 
     ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+    // creiamo i ruoli se non esistono
+    await EnsureRoleExistsAsync(roleManager, UserRoles.Admin);
+    await EnsureRoleExistsAsync(roleManager, UserRoles.Editor);
+    await EnsureRoleExistsAsync(roleManager, UserRoles.User);
 
     // creiamo alcuni utenti demo attraverso userManager che controlla in automatico che non ci siano doppioni negli inserimenti
-    ApplicationUser utente1 = await CreateUserIfNotExistsAsync(
+    ApplicationUser admin = await EnsureUserExistsAsync(
         userManager,
         "utente1@gmail.com",
         "123456",
@@ -26,7 +31,7 @@ public static class DataSeeder
       true);
 
 
-    ApplicationUser utente2 = await CreateUserIfNotExistsAsync(
+    ApplicationUser editor = await EnsureUserExistsAsync(
     userManager,
     "utente2@gmail.com",
     "123456",
@@ -34,31 +39,49 @@ public static class DataSeeder
     "3332354567",
     true);
 
-    ApplicationUser utente3 = await CreateUserIfNotExistsAsync(
+    ApplicationUser normalUser = await EnsureUserExistsAsync(
     userManager,
-    "untente3@gmail.com",
+    "utente3@gmail.com",
     "123456",
     "utente tre",
     "3331894567",
     true);
 
+    // assegniamo i ruoli
+
+    await EnsureSingleRoleAsync(userManager, admin, UserRoles.Admin);
+    await EnsureSingleRoleAsync(userManager, editor, UserRoles.Editor);
+    await EnsureSingleRoleAsync(userManager, normalUser, UserRoles.User);
+
     // creiamo alcuni interessi per ogni utente
 
-    await CreateInterestIfNotExistsAsync(context, utente1.Id, "Calcio");
-    await CreateInterestIfNotExistsAsync(context, utente1.Id, "Csharp");
-    await CreateInterestIfNotExistsAsync(context, utente1.Id, "Cinema");
+    await EnsureInterestExistsAsync(context, admin.Id, "Calcio");
+    await EnsureInterestExistsAsync(context, admin.Id, "Csharp");
+    await EnsureInterestExistsAsync(context, admin.Id, "Cinema");
 
-    await CreateInterestIfNotExistsAsync(context, utente2.Id, "Libri");
-    await CreateInterestIfNotExistsAsync(context, utente2.Id, "Angular");
-    await CreateInterestIfNotExistsAsync(context, utente2.Id, "Musica");
+    await EnsureInterestExistsAsync(context, editor.Id, "Libri");
+    await EnsureInterestExistsAsync(context, editor.Id, "Angular");
+    await EnsureInterestExistsAsync(context, editor.Id, "Musica");
 
-    await CreateInterestIfNotExistsAsync(context, utente3.Id, "Nuoto");
-    await CreateInterestIfNotExistsAsync(context, utente3.Id, "Viaggi");
-    await CreateInterestIfNotExistsAsync(context, utente3.Id, "Cucina");
+    await EnsureInterestExistsAsync(context, normalUser.Id, "Nuoto");
+    await EnsureInterestExistsAsync(context, normalUser.Id, "Viaggi");
+    await EnsureInterestExistsAsync(context, normalUser.Id, "Cucina");
 
   }
 
-  private static async Task<ApplicationUser> CreateUserIfNotExistsAsync(
+  private static async Task EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, string roleName)
+  {
+    bool exists = await roleManager.RoleExistsAsync(roleName);
+    if (!exists)
+    {
+      IdentityRole role = new IdentityRole();
+      role.Name = roleName;
+
+      await roleManager.CreateAsync(role);
+    }
+  }
+
+  private static async Task<ApplicationUser> EnsureUserExistsAsync(
       UserManager<ApplicationUser> userManager,
       string email,
       string password,
@@ -95,12 +118,36 @@ public static class DataSeeder
         errors.Add(error.Description);
       }
       string message = string.Join("|", errors);
-      throw new Exception($"Errore durante la creazione dell'utente {email} : {message}");
+      throw new Exception($"Errore durante il seed dell'utente {email} : {message}");
     }
     return user;
   }
 
-  private static async Task CreateInterestIfNotExistsAsync(
+  private static async Task EnsureSingleRoleAsync(UserManager<ApplicationUser> userManager, ApplicationUser user, string targetRole)
+  {
+    IList<string> currentRoles = await userManager.GetRolesAsync(user);
+    // rimuoviamo i ruoli classici se diversi da quello target
+
+    for (int i = 0; i < currentRoles.Count; i++)
+    {
+      string currentRole = currentRoles[i];
+
+      if (currentRole == UserRoles.Admin || currentRole == UserRoles.Editor || currentRole == UserRoles.User)
+      {
+        await userManager.RemoveFromRoleAsync(user, currentRole);
+      }
+    }
+    bool alreadyInTargetRole = await userManager.IsInRoleAsync(user, targetRole);
+
+    if (!alreadyInTargetRole)
+    {
+      await userManager.AddToRoleAsync(user, targetRole);
+    }
+
+  }
+
+
+  private static async Task EnsureInterestExistsAsync(
    ApplicationDbContext context,
    string userId,
    string nome)

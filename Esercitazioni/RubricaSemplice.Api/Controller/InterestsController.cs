@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RubricaSemplice.Api.Dtos;
 using RubricaSemplice.Api.Services;
+using RubricaSemplice.Api.Models;
 
 namespace RubricaSemplice.Api.Controllers;
 
@@ -46,6 +47,7 @@ public class InterestsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRoles.AdminOrEditor)]
     public async Task<IActionResult> Create([FromBody] InterestCreateDto dto) // IActionResult è una classe di Identity. Frombody significa che riceve il json e lo converte in ciò che il dto farà vedere
     {
         string userId = GetUserIdFromToken(); 
@@ -61,7 +63,8 @@ public class InterestsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-
+    [Authorize(Roles = UserRoles.AdminOrEditor)]
+    
     public async Task<IActionResult> Update(int id, [FromBody] InterestCreateDto dto)
     {
         string userId = GetUserIdFromToken();
@@ -76,7 +79,8 @@ public class InterestsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-
+    [Authorize(Roles = UserRoles.AdminOrEditor)]
+    
     public async Task<IActionResult> Delete(int id)
     {
         string userId = GetUserIdFromToken();

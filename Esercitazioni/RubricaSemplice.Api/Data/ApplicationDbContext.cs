@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RubricaSemplice.Api.Models;
@@ -5,14 +6,26 @@ using RubricaSemplice.Api.Models;
 namespace RubricaSemplice.Api.Data;
 
 // definizione del contesto del database, i due punti indicano l'ereditarietà ovvero ApplicationDbContext che eredità tutto ciò che fa IdentityUserContext
-public class ApplicationDbContext : IdentityUserContext<ApplicationUser>
+
+
+
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser,IdentityRole,string>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    /* Questo DbContext ora gestisce:
+    - utenti
+    - ruoli
+    - user-roles
+    - claims, logins, tokens di Identity
+    - la nostra tabella custom Interests 
+    */
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options) : base(options)
     {
-        //passa la configurazione del db al contesto
+     
     }
 
-    public DbSet<Interest> Interests { get; set; }
+    public DbSet<Interest> Interests {get;set;}
+
 
     // Configura le relazioni tra tabelle
     protected override void OnModelCreating(ModelBuilder builder)
