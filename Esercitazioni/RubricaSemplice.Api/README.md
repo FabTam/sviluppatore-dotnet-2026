@@ -2023,7 +2023,3 @@ curl -X POST "http://localhost:45067067/api/interests" \
 -d '{"nome":"Cinema"}'
 ```
 
-TOKEN=$(curl -s -X POST "http://localhost:5067/api/Auth/login" \
--H "Content-Type: application/json" \
--d '{"email":"utente2@gmail.com", "password":"123456"}' \
-| jq -r '.token')
