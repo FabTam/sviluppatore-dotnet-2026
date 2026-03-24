@@ -1303,6 +1303,9 @@ using RubricaSemplice.Api.Models;
 namespace RubricaSemplice.Api.Services;
 
 // Questa classe si occupa della logica di business per la registrazione e il login.
+
+
+// Questa classe si occupa della logica di business per la registrazione e il login.
 public class AuthService
 {
     private readonly UserManager<ApplicationUser> _userManager; // si occupa di creazione e gestione degli utenti.
@@ -1332,7 +1335,7 @@ public class AuthService
             IdentityError error = new IdentityError();
             error.Description = "Email già registrata.";
 
-            List<IdentityError> errors = new List<IdentityErrors>()
+            List<IdentityError> errors = new List<IdentityError>();
             errors.Add(error);
 
             return IdentityResult.Failed(errors.ToArray());
@@ -1355,14 +1358,14 @@ public class AuthService
             return result;
         }
 
-        IdentityResult addRoleResult = await _usermanager.AddToRoleAsync(user, UserRoles.User);
+        IdentityResult addRoleResult = await _userManager.AddToRoleAsync(user, UserRoles.User);
         
         if(!addRoleResult.Succeeded)
         {
             return addRoleResult;
         }
         
-        return result
+        return result;
     }
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
@@ -1382,9 +1385,9 @@ public class AuthService
         {
             return null;
         }
-
+        IList<string> roles = await _userManager.GetRolesAsync(user);
         // Nel caso in cui la password sia corretta chiamiamo il metodo per la generazione del token e costruiamo il Dto per la risposta
-        string token = _jwtHelper.GenerateToken(user);
+        string token = _jwtHelper.GenerateToken(user, roles);
 
         AuthResponseDto response    = new AuthResponseDto();
         response.Token              = token;
@@ -1461,6 +1464,8 @@ public class AuthService
         return result;
     }
 }
+
+
 ```
 
 ## Services/UserRoleService.cs
@@ -1701,7 +1706,7 @@ public static class DataSeeder
 
     ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    RoleManager<IdentityRole> roleManager = scoper.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     // creiamo i ruoli se non esistono
     await EnsureRoleExistsAsync(roleManager, UserRoles.Admin);
@@ -1709,7 +1714,7 @@ public static class DataSeeder
     await EnsureRoleExistsAsync(roleManager, UserRoles.User);
 
     // creiamo alcuni utenti demo attraverso userManager che controlla in automatico che non ci siano doppioni negli inserimenti
-    ApplicationUser utente1 = await EnsureUserExistsAsync(
+    ApplicationUser admin = await EnsureUserExistsAsync(
         userManager,
         "utente1@gmail.com",
         "123456",
@@ -1718,7 +1723,7 @@ public static class DataSeeder
       true);
 
 
-    ApplicationUser utente2 = await EnsureUserExistsAsync(
+    ApplicationUser editor = await EnsureUserExistsAsync(
     userManager,
     "utente2@gmail.com",
     "123456",
@@ -1726,45 +1731,45 @@ public static class DataSeeder
     "3332354567",
     true);
 
-    ApplicationUser utente3 = await EnsureUserExistsAsync(
+    ApplicationUser normalUser = await EnsureUserExistsAsync(
     userManager,
-    "untente3@gmail.com",
+    "utente3@gmail.com",
     "123456",
     "utente tre",
     "3331894567",
     true);
 
-   // assegnamo i ruoli
+    // assegniamo i ruoli
 
-   await EnsureSingleRoleAsync(userManager, adminUser, userRoles.Admin);
-   await EnsureSingleRoleAsync(userManager, editorUser, userRoles.Editor);
-   await EnsureSingleRoleAsync(userManager, normalUser, userRoles.User);
+    await EnsureSingleRoleAsync(userManager, admin, UserRoles.Admin);
+    await EnsureSingleRoleAsync(userManager, editor, UserRoles.Editor);
+    await EnsureSingleRoleAsync(userManager, normalUser, UserRoles.User);
 
     // creiamo alcuni interessi per ogni utente
 
-    await EnsureInterestsExistsAsync(context, adminUser.Id, "Calcio");
-    await EnsureInterestsExistsAsync(context, adminUser.Id, "Csharp");
-    await EnsureInterestsExistsAsync(context, adminUser.Id, "Cinema");
+    await EnsureInterestExistsAsync(context, admin.Id, "Calcio");
+    await EnsureInterestExistsAsync(context, admin.Id, "Csharp");
+    await EnsureInterestExistsAsync(context, admin.Id, "Cinema");
 
-    await EnsureInterestsExistsAsync(context, editorUser.Id, "Libri");
-    await EnsureInterestsExistsAsync(context, utente2.Id, "Angular");
-    await EnsureInterestsExistsAsync(context, utente2.Id, "Musica");
+    await EnsureInterestExistsAsync(context, editor.Id, "Libri");
+    await EnsureInterestExistsAsync(context, editor.Id, "Angular");
+    await EnsureInterestExistsAsync(context, editor.Id, "Musica");
 
-    await EnsureInterestsExistsAsync(context, normalUser.Id, "Nuoto");
-    await EnsureInterestsExistsAsync(context, normalUser.Id, "Viaggi");
-    await EnsureInterestsExistsAsync(context, normalUser.Id, "Cucina");
+    await EnsureInterestExistsAsync(context, normalUser.Id, "Nuoto");
+    await EnsureInterestExistsAsync(context, normalUser.Id, "Viaggi");
+    await EnsureInterestExistsAsync(context, normalUser.Id, "Cucina");
 
   }
 
   private static async Task EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, string roleName)
   {
-    bool exists = await roleManager.RoleExistsAsync(rolename);
-    if(!exists)
+    bool exists = await roleManager.RoleExistsAsync(roleName);
+    if (!exists)
     {
-        identityRole role = new identityRole();
-        role.Name = roleName;
+      IdentityRole role = new IdentityRole();
+      role.Name = roleName;
 
-        await roleManager.CreateAsync(role);
+      await roleManager.CreateAsync(role);
     }
   }
 
@@ -1815,23 +1820,24 @@ public static class DataSeeder
     IList<string> currentRoles = await userManager.GetRolesAsync(user);
     // rimuoviamo i ruoli classici se diversi da quello target
 
-    for(int i = 0; i < currentRoles.Count>; i++)
+    for (int i = 0; i < currentRoles.Count; i++)
     {
-        string currentRole = currentRoles[i];
+      string currentRole = currentRoles[i];
 
-        if(currentRole == UserRoles.Admin || currentRole == UserRoles.Editor || currentRole == UserRoles.User)
-        {
-            await userManager.RemoveFromRoleAsync(user, currentRole);
-        }
+      if (currentRole == UserRoles.Admin || currentRole == UserRoles.Editor || currentRole == UserRoles.User)
+      {
+        await userManager.RemoveFromRoleAsync(user, currentRole);
+      }
     }
+    bool alreadyInTargetRole = await userManager.IsInRoleAsync(user, targetRole);
+
+    if (!alreadyInTargetRole)
+    {
+      await userManager.AddToRoleAsync(user, targetRole);
+    }
+
   }
 
-  bool alreadyInTargetRole = await userManager.IsInRoleAsync(user, targetRole);
-
-  if(!alreadyInTargetRole)
-  {
-    await userManager.AddToRoleAsync(user, targetRole);
-  }
 
   private static async Task EnsureInterestExistsAsync(
    ApplicationDbContext context,
@@ -1865,6 +1871,7 @@ public static class DataSeeder
   }
 
 }
+
 
 ```
 
@@ -1994,23 +2001,29 @@ Con il seed sopra puoi usare:
 Login admin:
 
 ```bash
-curl -x POST "http://localhsot:4067/api/Auth/login" \
+TOKEN=$(curl -s -X POST "http://localhost:5067/api/Auth/login" \
 -H "Content-Type: application/json" \
--d '{"email":"admin@email.com", "password" : "123456"}
+-d '{"email":"utente1@gmail.com", "password":"123456"}' \
+| jq -r '.token')
 ```
 cambiare ruolo ad un utente, come admin
 
 ```bash
-curl -x PUT "http://localhsot:4067/api/Auth/login" \
+curl -X PUT "http://localhost:5067/api/AdminUsers/change-role" \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer IL_TOKEN_ADMIN" \
--d '{"email":"user@email.com", "newRole: "Editor"}
+-H "Authorization: Bearer $TOKEN" \
+-d '{"email":"utente3@gmail.com", "newRole": "Editor"}'
 ```
 Endpoint protetto per admin o editor
 
 ```bash
-curl -x POST "http://localhsot:4067/api/Auth/login" \
+curl -X POST "http://localhost:45067067/api/interests" \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer IL_TOKEN_ADMIN" \
--d '{"nome":"Cinema"}
+-d '{"nome":"Cinema"}'
 ```
+
+TOKEN=$(curl -s -X POST "http://localhost:5067/api/Auth/login" \
+-H "Content-Type: application/json" \
+-d '{"email":"utente2@gmail.com", "password":"123456"}' \
+| jq -r '.token')
