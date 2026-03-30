@@ -7,6 +7,6 @@ public static class UserRoles
     public const string Editor = "Editor";
     public const string User   = "User";
 
-    // Comanda costante da usare in [Authroize(Roles = ""]
+    // Comanda costante da usare in [Authorize(Roles = ""]
     public const string AdminOrEditor = "Admin, Editor";
 }
