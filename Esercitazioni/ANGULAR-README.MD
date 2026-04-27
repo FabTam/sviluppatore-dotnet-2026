@@ -73,3 +73,19 @@ Nel tuo caso:
 ## Navbar condivisa
 
 - ng generate component shared/components/navbar
+
+
+## Perchè i model conviene crearli a mano
+
+I model sono file molto piccoli.
+
+Esempio:
+
+``` typescript
+export interface LoginRequest{
+    email: string;
+    password: string;
+}
+```
+
+Per questo spesso è più comodo creare a mano i file dento src/app/models.
