@@ -89,3 +89,45 @@ export interface LoginRequest{
 ```
 
 Per questo spesso è più comodo creare a mano i file dento src/app/models.
+
+
+
+- Configurare i file main, app component, il file environment, il file proxy.conf.json, app.routes per le rotte della web app.
+
+- readonly currentUser = signal<SessionUser| null>(this.readStoredUser()); -> questa parte in auth.service.ts serve per mantenere la sessione degli utenti
+# main.ts
+
+```typescript
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app.component';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+
+```
+
+
+
+
+# LOGIN
+
+Nel progetto reale il login fa POST a:
+
+```
+/api/Auth/login
+
+```
+
+Metodo reale:
+
+```
+login(payload: LoginRequest): Observable<AuthResponse>
+```
+
+
+# TIPS PER PRODUZIONE
+- questo è il comando di quando siamo in produzione per far partire il frontend
+```
+ng serve --proxy-config proxy.conf.json
+```
