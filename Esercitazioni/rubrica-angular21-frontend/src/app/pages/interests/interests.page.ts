@@ -140,7 +140,7 @@ export class InterestsPage {
 
   private extractErrorMessage(error: unknown, fallback: string): string {
     if (error instanceof Error) {
-      return error.errro?.message ?? fallback;
+      return error?.message ?? fallback;
     }
     return fallback
   }

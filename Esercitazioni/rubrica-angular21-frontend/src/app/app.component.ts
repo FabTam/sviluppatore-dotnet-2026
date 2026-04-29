@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {NavbarComponent} from './shared/components/navbar/navbar.component';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  standalone:true,
+  imports: [RouterOutlet, NavbarComponent],
   template: `
   <app-navbar></app-navbar>
   <main class ="container page">
@@ -14,6 +13,6 @@ import {NavbarComponent} from './shared/components/navbar/navbar.component';
   </main>
   `
 })
-export class App {
+export class AppComponent {
   protected readonly title = signal('rubrica-angular21-frontend');
 }
