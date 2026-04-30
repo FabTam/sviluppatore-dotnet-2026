@@ -7,8 +7,7 @@ import { AdminUsersService } from '../../services/admin-users.service';
   selector: 'app-admin-change-role',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: './admin-change-role.page.html',
-  styleUrl: './admin-change-role.page.css',
+  templateUrl: './admin-change-role.page.html'
 })
 export class AdminChangeRolePage {
 
