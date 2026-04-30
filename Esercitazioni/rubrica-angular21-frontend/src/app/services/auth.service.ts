@@ -20,7 +20,9 @@ export class AuthService {
 
   readonly currentUser = signal<SessionUser | null>(this.readStoredUser());
 
+  
   login(payload: LoginRequest): Observable<AuthResponse> {
+
     return this.http
       .post<AuthResponse>(`${environment.apiBaseUrl}/Auth/login`, payload)
       .pipe(tap((response) => this.setSession(response)));
