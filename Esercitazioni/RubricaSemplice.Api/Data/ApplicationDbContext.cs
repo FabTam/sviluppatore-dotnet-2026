@@ -25,6 +25,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser,IdentityRo
     }
 
     public DbSet<Interest> Interests {get;set;}
+    public DbSet<ApplicationUser> Users {get;set;}
 
 
     // Configura le relazioni tra tabelle

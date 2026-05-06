@@ -38,6 +38,7 @@ export class AdminChangeRolePage {
       next: (response) => {
         this.isSubmitting.set(false);
         this.successMessage.set(`${response.message} Nuovo Ruolo:${response.role}`)
+        console.log(response);
       },
       error: (error: unknown) =>{
         this.isSubmitting.set(false);
